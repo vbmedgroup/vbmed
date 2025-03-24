@@ -1,0 +1,21 @@
+# Ambientes virtuais
+venv/
+.env
+
+# Arquivos e pastas de cache
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+
+# Configurações do VSCode
+.vscode/
+
+# Arquivos estáticos coletados
+staticfiles/
+
+# Migrations (opcional, se quiser ignorar migrações automáticas)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+**/migrations/*.py
+!*/migrations/__init__.py

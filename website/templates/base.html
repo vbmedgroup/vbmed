@@ -1,0 +1,86 @@
+{% load static %} <!-- Carregar arquivos estáticos do Django -->
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 🔹 Meta Tags para SEO 🔹 -->
+    <title>{% block title %}VB Med{% endblock %}</title>
+    <meta name="description" content="VB Med - Soluções tecnológicas para a área da saúde. Inovação, segurança e eficiência para profissionais de saúde.">
+    <meta name="keywords" content="Saúde, Tecnologia, Prontuário Eletrônico, Gestão Médica, VB Med">
+    <meta name="author" content="VB Med">
+    <meta name="robots" content="index, follow"> <!-- Permite que o Google rastreie -->
+
+    <!-- 🔹 Meta Tags Open Graph (Facebook, LinkedIn) 🔹 -->
+    <meta property="og:title" content="VB Med - Tecnologia para a Saúde">
+    <meta property="og:description" content="Transformamos a área da saúde com inovação e tecnologia. Conheça nossas soluções!">
+    <meta property="og:image" content="{% static 'images/logo.png' %}">
+    <meta property="og:url" content="https://www.vbmed.com">
+    <meta property="og:type" content="website">
+
+    <!-- 🔹 Meta Tags Twitter Card 🔹 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VB Med - Tecnologia para a Saúde">
+    <meta name="twitter:description" content="Soluções tecnológicas para gestão médica e prontuários eletrônicos.">
+    <meta name="twitter:image" content="{% static 'images/logo.png' %}">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{% static 'images/logo_white.png' %}" alt="VB Med - Soluções Tecnológicas para a Saúde" class="logo">
+            <span class="header-title">VB Med - Healthcare Technology</span>
+            <span class="mobile-title">VB Med</span>
+        </div>
+
+        <nav class="desktop-menu">
+            <a href="/">Início</a>
+            <a href="/about/">Sobre</a>
+            <a href="/services/">Serviços</a>
+            <a href="/contact/">Contato</a>
+        </nav>
+
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <!-- Botão do WhatsApp -->
+    <a href="https://wa.me/5511978859774" target="_blank" class="whatsapp-button">
+        <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="Atendimento via WhatsApp" class="whatsapp-icon">
+    </a>
+    
+
+
+    <!-- Menu Mobile -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/">Início</a>
+        <a href="/about/">Sobre</a>
+        <a href="/services/">Serviços</a>
+        <a href="/contact/">Contato</a>
+    </div>
+
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 VB Med - Todos os Direitos Reservados
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById("mobileMenu");
+            if (menu.style.display === "none" || menu.style.display === "") {
+                menu.style.display = "flex"; /* Exibe em coluna */
+            } else {
+                menu.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

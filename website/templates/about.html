@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block title %}Sobre a VB Med - Inovação na Saúde{% endblock %}
+{% block meta_description %}Saiba mais sobre a VB Med, uma empresa dedicada a transformar a área da saúde através da tecnologia e inovação.{% endblock %}
+{% block og_title %}Sobre a VB Med - Tecnologia para Saúde{% endblock %}
+{% block og_description %}Conheça a missão e os valores da VB Med, empresa líder em soluções tecnológicas para a saúde.{% endblock %}
+{% block twitter_title %}Sobre a VB Med - Tecnologia para Saúde{% endblock %}
+{% block twitter_description %}Inovação, segurança e eficiência: descubra como a VB Med revoluciona a área da saúde.{% endblock %}
+
+{% block content %}
+    <div class="about-container">
+        <img src="{% static 'images/logo.png' %}" alt="VB Med - Sobre Nós" class="about-logo">
+        <h1>Sobre a <span>VB Med</span></h1>
+        <p>A <strong>VB Med</strong> nasceu com o propósito de transformar a área da saúde por meio da tecnologia.</p>
+        
+        <h2>Nossa Missão</h2>
+        <p>Facilitar a gestão médica e aprimorar o atendimento ao paciente através de soluções inovadoras e seguras.</p>
+
+        <h2>Nossos Valores</h2>
+        <ul class="values-list">
+            <li>
+                <span class="icon">💡</span> 
+                <strong>Inovação:</strong> Aplicamos tecnologia de ponta para melhorar a experiência dos profissionais e pacientes.
+            </li>
+            <li>
+                <span class="icon">🔒</span> 
+                <strong>Segurança:</strong> Protegemos os dados de saúde seguindo as melhores práticas do setor.
+            </li>
+            <li>
+                <span class="icon">⚡</span> 
+                <strong>Eficiência:</strong> Desenvolvemos soluções que agilizam processos e reduzem custos operacionais.
+            </li>
+            <li>
+                <span class="icon">🤝</span> 
+                <strong>Compromisso:</strong> Trabalhamos com transparência e ética para oferecer o melhor serviço.
+            </li>
+        </ul>
+
+        <div class="button-group">
+            <a href="/services/" class="btn">Conheça Nossos Serviços</a>
+        </div>
+    </div>
+{% endblock %}

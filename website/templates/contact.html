@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fale Conosco - VB Med{% endblock %}
+{% block meta_description %}Entre em contato com a VB Med e saiba mais sobre nossas soluções tecnológicas para a área da saúde.{% endblock %}
+{% block og_title %}Fale Conosco - VB Med{% endblock %}
+{% block og_description %}Precisa de mais informações? Entre em contato com a VB Med e descubra como podemos ajudar sua instituição de saúde.{% endblock %}
+{% block twitter_title %}Fale Conosco - VB Med{% endblock %}
+{% block twitter_description %}Entre em contato com a VB Med e descubra nossas soluções inovadoras para clínicas, hospitais e consultórios.{% endblock %}
+
+{% block content %}
+    <div class="contact-container">
+        <img src="{% static 'images/logo.png' %}" alt="VB Med - Contato" class="contact-logo">
+        <h1>Entre em <span>Contato</span></h1>
+        <p>Precisa de mais informações? Estamos à disposição para atender você.</p>
+
+        <!-- 🔹 Formulário de Contato -->
+        <form method="post" action="{% url 'contact' %}" class="contact-form">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.nome.label_tag }}
+                {{ form.nome }}
+            </div>
+        
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+        
+            <div class="form-group">
+                {{ form.mensagem.label_tag }}
+                {{ form.mensagem }}
+            </div>
+        
+            <button type="submit" class="btn">Enviar Mensagem</button>
+        </form>
+        
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <h2>📍 Nosso Endereço</h2>
+                <p>Rua Mário Ancona, 340 - Parque Ipê, São Paulo - SP</p>
+            </div>
+
+            <div class="contact-card">
+                <h2>📧 E-mail</h2>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        let email = "contato" + "@" + "vbmed.com";
+                        document.getElementById("email-protegido").innerHTML = `<a href="mailto:${email}">${email}</a>`;
+                    });
+                </script>
+                <span id="email-protegido"></span>
+            </div>
+
+            <div class="contact-card">
+                <h2>📞 Telefone</h2>
+                <p>+55 11 97885-9774</p>
+            </div>
+
+            <div class="contact-card">
+                <h2>📱 Redes Sociais</h2>
+                <p>Siga-nos no <a href="#">Instagram</a> e <a href="#">Twitter</a>.</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
