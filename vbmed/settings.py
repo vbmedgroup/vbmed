@@ -117,7 +117,7 @@ CACHES = {
     }
 }
 
-# 📌 Configurações de e-mail
+# 📌 Configurações de e-mails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
