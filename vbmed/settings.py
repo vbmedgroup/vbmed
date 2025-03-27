@@ -21,10 +21,10 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 🚨 Segurança: Removemos a SECRET_KEY do código-fonte
-SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key")  # ⚠️ Troque por uma chave real no .env
+SECRET_KEY = os.getenv("SECRET_KEY") 
 
 # 🚨 Segurança: Defina DEBUG=False em produção
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 # Hosts permitidos
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
@@ -77,13 +77,14 @@ WSGI_APPLICATION = 'vbmed.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': os.getenv('DB_NAME', 'local_db'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
 
 # 📌 Validações de senha
 AUTH_PASSWORD_VALIDATORS = [
@@ -135,3 +136,7 @@ SESSION_COOKIE_SECURE = not DEBUG
 
 # 📌 Definição do ID padrão para chaves primárias
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
