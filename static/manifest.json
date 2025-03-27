@@ -1,0 +1,23 @@
+{
+    "name": "VB Med - Soluções Tecnológicas para Saúde",
+    "short_name": "VB Med",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#233b64",
+    "theme_color": "#233b64",
+    "orientation": "portrait",
+    "scope": "/",
+    "icons": [
+      {
+        "src": "/static/images/logo-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/static/images/logo-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  

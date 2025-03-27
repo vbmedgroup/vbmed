@@ -28,6 +28,10 @@
 
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo-192.png' %}">
+    <meta name="theme-color" content="#233b64">
+
 </head>
 <body>
     <header>
@@ -74,13 +78,39 @@
 
     <script>
         function toggleMenu() {
-            var menu = document.getElementById("mobileMenu");
+            const menu = document.getElementById("mobileMenu");
+            const button = document.querySelector(".hamburger");
+    
             if (menu.style.display === "none" || menu.style.display === "") {
-                menu.style.display = "flex"; /* Exibe em coluna */
+                // Calcula a posição do botão hambúrguer
+                const rect = button.getBoundingClientRect();
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    
+                menu.style.position = "absolute";
+                menu.style.top = (rect.bottom + scrollTop + 10) + "px"; // abaixo do botão
+                menu.style.right = "20px";
+                menu.style.display = "flex";
             } else {
                 menu.style.display = "none";
             }
         }
     </script>
+    
+
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker
+              .register("{% static 'service-worker.js' %}")
+              .then(function (registration) {
+                console.log('Service Worker registrado com sucesso:', registration.scope);
+              })
+              .catch(function (error) {
+                console.log('Falha ao registrar o Service Worker:', error);
+              });
+          });
+        }
+      </script>
+      
 </body>
 </html>

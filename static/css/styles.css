@@ -125,9 +125,8 @@ main {
 
 /* 🔹 Menu Mobile */
 .mobile-menu {
-    position: absolute;
-    top: 70px;
-    right: 20px;
+    position: fixed;
+    top: 80px; /* abaixo do header */
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -139,6 +138,7 @@ main {
     flex-direction: column;
     display: none;
 }
+
 
 .mobile-menu a {
     display: block;
@@ -163,21 +163,26 @@ main {
         flex-direction: column;
         padding: 20px;
     }
+
     .desktop-menu {
         display: none;
     }
+
     .hamburger {
         display: block;
     }
+
     .header-title {
         display: none;
     }
+
     .mobile-title {
         display: block;
         font-size: 18px;
         font-weight: bold;
     }
 }
+
 
 /* 🔹 Footer */
 footer {
