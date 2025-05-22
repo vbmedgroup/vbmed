@@ -16,6 +16,7 @@ def contact(request):
     return render(request, 'contact.html')
 
 def contact_view(request):
+
     form = ContactForm()
     
     if request.method == "POST":
@@ -39,6 +40,5 @@ def contact_view(request):
 
     return render(request, "contact.html", {"form": form})
 
-
 def teste_finalizado(request):
-    return render(request, 'teste_finalizado.html')
+        return render(request, 'teste_finalizado.html')
