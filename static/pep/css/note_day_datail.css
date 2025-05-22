@@ -1,0 +1,99 @@
+.note-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.note-day-header h2 {
+  font-size: 24px;
+  color: #184E77;
+  margin-bottom: 5px;
+}
+
+.note-day-date {
+  font-size: 18px;
+  font-weight: bold;
+  color: #184E77;
+}
+
+.note-day-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.note-day-buttons button {
+  padding: 8px 16px;
+  background-color: #184E77;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.note-day-buttons button:hover {
+  background-color: #123a5c;
+}
+
+.note-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.note-detail-card {
+  background-color: #f9f9f9;
+  padding: 18px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.note-detail-card p {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 30px;
+  text-decoration: none;
+  color: #184E77;
+  font-weight: bold;
+  border: 1px solid #184E77;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.back-link:hover {
+  background-color: #184E77;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .note-day-container {
+    padding: 25px 20px;
+    margin: 30px 15px;
+  }
+
+  .note-day-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .note-day-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .note-day-buttons button {
+    flex: 1;
+    margin: 0 5px;
+    font-size: 14px;
+  }
+}

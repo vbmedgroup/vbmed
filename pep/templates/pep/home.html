@@ -1,0 +1,49 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}Home - VB ERP{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/home.css' %}">
+  <style>
+    .card.not-viewed {
+      border: 3px solid #ff9800;
+      box-shadow: 0 0 10px rgba(255, 152, 0, 0.4);
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="title-bar">
+  <h2 class="section-title">Pacientes Recentes</h2>
+</div>
+
+<div class="scroll-wrapper">
+  <div class="scroll-row">
+    {% for patient in recent_patients %}
+      <a href="{% url 'pep:note_list' patient.id %}" style="text-decoration: none; color: inherit;">
+        <div class="card {% if not patient.viewed %}not-viewed{% endif %}">
+          <div class="card-name">{{ patient.name }}</div>
+          <div class="card-date">{{ patient.last_updated|date:"d/m/Y H:i" }}</div>
+          <div class="card-reason">{{ patient.get_visit_reason_display }}</div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<hr style="margin: 30px 0; border-color: #ccc;">
+
+<h2 class="section-title">Fique por dentro</h2>
+
+<div class="news-list">
+  {% for news in news_list %}
+    <div class="news-card">
+      <strong class="news-title">{{ news.title }}</strong>
+      <p class="news-content">{{ news.content|truncatewords:30 }}</p>
+    </div>
+  {% empty %}
+    <p>Não há publicações no momento.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -680,6 +680,17 @@ p {
     display: inline-block;
 }
 
+.btn-exit {
+    display: inline-block;
+    background-color: #b91c1c;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
 .btn:hover {
     background-color: #233b64;
 }

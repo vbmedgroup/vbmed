@@ -1,0 +1,37 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}{{ date|date:"d/m/Y" }} - {{ patient.name }}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/note_day_datail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="note-day-container">
+  <!-- Cabeçalho -->
+  <div class="note-day-header">
+    <div>
+      <h2>Evoluções de {{ patient.name }}</h2>
+      <span class="note-day-date">{{ date|date:"d/m/Y" }}</span>
+    </div>
+    <div class="note-day-buttons">
+      <button>Imprimir</button>
+      <button>Exportar PDF</button>
+    </div>
+  </div>
+
+  <!-- Lista de evoluções -->
+  <div class="note-detail-list">
+    {% for note in notes %}
+      <div class="note-detail-card">
+        <strong>{{ note.date|time:"H:i" }} - {{ note.professional.get_full_name|default:note.professional.username }}</strong>
+        <p>{{ note.content|linebreaksbr }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Link de retorno -->
+  <a href="{% url 'pep:note_list' patient.id %}" class="back-link">← Voltar para lista</a>
+</div>
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}Nova Evolução - {{ patient.name }}{% endblock %}
+
+{% block extra_head %}
+  <style>
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .evolution-card {
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-weight: bold;
+      color: #184E77;
+    }
+
+    .evolution-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      background-color: #f8f9fa;
+    }
+
+    .evolution-card span {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .btn-bottom {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .btn-bottom a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background-color: #184E77;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .note-form {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      max-width: 700px;
+      margin: 40px auto 20px;
+    }
+
+    .note-form textarea {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+
+    .note-form button {
+      padding: 10px 20px;
+      background-color: #184E77;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .notes-history {
+      margin-top: 50px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+
+    .note-item {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .note-meta {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .note-content {
+      font-size: 15px;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    .btn-agendar {
+      display: inline-block;
+      margin-top: 30px;
+      background-color: #184E77;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="header-bar">
+  <h2>Nova Evolução</h2>
+  <a href="{% url 'pep:pep_reset_and_exit' %}" class="btn-principal">← Voltar</a>
+</div>
+
+<h4>{{ patient.name }}</h4>
+
+{% if section %}
+  <div class="note-form">
+    <form method="post">
+      {% csrf_token %}
+      <label for="content">Preencher {{ section|capfirst }}:</label>
+      <textarea name="content" id="content" rows="6" required></textarea>
+      <button type="submit">Salvar</button>
+    </form>
+  </div>
+  <div class="btn-bottom">
+  </div>
+{% else %}
+  <div class="card-grid">
+    <a href="{% url 'pep:fill_section' patient.id 'anamnese' %}" class="evolution-card">
+      <span>🩺</span>
+      Anamnese
+    </a>
+    <a href="{% url 'pep:fill_section' patient.id 'exames' %}" class="evolution-card">
+      <span>🧪</span>
+      Exames
+    </a>
+    <a href="{% url 'pep:fill_section' patient.id 'conduta' %}" class="evolution-card">
+      <span>📋</span>
+      Conduta
+    </a>
+  </div>
+
+  <div class="btn-bottom">
+    <a href="{% url 'pep:schedule_appointment' patient.id %}" class="btn-agendar">📅 Agendar Consulta ou Exame</a>
+    <a href="{% url 'pep:note_list' patient.id %}">Ver anotações anteriores</a>
+  </div>
+
+  {% if notes %}
+    <div class="notes-history">
+      <h3>Histórico de Evoluções</h3>
+      {% for note in notes %}
+        <div class="note-item">
+          <p class="note-meta">
+            🕒 {{ note.date|date:"d/m/Y H:i" }}
+              {% if note.professional %}
+              - por {{ note.professional.first_name }} {{ note.professional.last_name }}
+              {% endif %}
+          <div class="note-content">
+            {{ note.content|linebreaks }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Nenhuma evolução registrada ainda para este paciente.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

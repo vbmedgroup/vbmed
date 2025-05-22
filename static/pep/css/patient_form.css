@@ -1,0 +1,52 @@
+/* static/pep/css/patient_form.css */
+h2 {
+    margin-bottom: 20px;
+    color: #184E77;
+  }
+  
+  .patient-form {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .patient-form div {
+    margin-bottom: 15px;
+  }
+  
+  input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  button.save-button {
+    width: 100%;
+    padding: 12px;
+    background: #184E77;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  a.back-link {
+    display: block;
+    text-align: center;
+    margin: 25px auto 0;
+    max-width: 600px;
+    padding: 12px;
+    background: #ccc;
+    color: #333;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }

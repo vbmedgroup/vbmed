@@ -1,0 +1,28 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}Lista de Pacientes{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/patient_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="title-bar">
+  <h2>Pacientes Recentes</h2>
+</div>
+
+<a href="{% url 'pep:patient_create' %}" class="new-patient-btn">+ Novo Paciente</a>
+
+{% if patients %}
+  <div class="patient-list">
+    {% for patient in patients %}
+      <a href="{% url 'pep:note_list' patient.id %}" class="patient-card">
+        <strong class="patient-name">{{ patient.name }}</strong><br>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="empty-message">Nenhum paciente encontrado.</p>
+{% endif %}
+{% endblock %}

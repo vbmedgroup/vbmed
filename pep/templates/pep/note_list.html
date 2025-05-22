@@ -1,0 +1,33 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}Evoluções - {{ patient.name }}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/note_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Evoluções de {{ patient.name }}</h2>
+
+<div class="actions">
+  <a href="{% url 'pep:note_create' patient.id %}" class="new-note">+ Nova Evolução</a>
+  <a href="#" class="prescription">+ Prescrição</a>
+  <a href="{% url 'pep:patient_list' %}" class="back">← Voltar</a>
+</div>
+
+{% if sorted_dates %}
+  <div class="notes-list">
+    {% for date in sorted_dates %}
+      <a href="{% url 'pep:note_day_detail' patient_id=patient.id date=date %} " class="note-card-link">
+        <div class="note-card">
+          <strong>{{ date|date:"d/m/Y" }}</strong><br>
+          <span class="note-author">Evoluções do dia</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="empty-msg">Nenhuma evolução registrada.</p>
+{% endif %}
+{% endblock %}

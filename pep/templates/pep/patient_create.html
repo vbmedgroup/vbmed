@@ -1,0 +1,27 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+{% load form_extras %}
+
+{% block title %}Novo Paciente{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/patient_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Cadastrar Paciente</h2>
+
+<form method="post" class="patient-form">
+  {% csrf_token %}
+  {% for field in form %}
+    <div>
+      {{ field.errors }}
+      {{ field|add_placeholder:field.label }}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="save-button">Salvar</button>
+</form>
+
+<a href="{% url 'pep:patient_list' %}" class="back-link">Voltar</a>
+{% endblock %}

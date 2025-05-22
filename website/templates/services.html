@@ -8,7 +8,52 @@
 {% block twitter_title %}Nossos Serviços - VB Med{% endblock %}
 {% block twitter_description %}Soluções tecnológicas para transformar a gestão de clínicas e hospitais. Saiba mais sobre os serviços da VB Med!{% endblock %}
 
+{% block content %}{% extends 'base.html' %}
+{% load static %} 
+
+{% block title %}Nossos Serviços - VB Med{% endblock %}
+{% block meta_description %}Conheça os serviços da VB Med e descubra como nossas soluções tecnológicas podem transformar a gestão médica.{% endblock %}
+{% block og_title %}Nossos Serviços - VB Med{% endblock %}
+{% block og_description %}Prontuário eletrônico, análise de dados médicos, segurança da informação e desenvolvimento de software para clínicas e hospitais.{% endblock %}
+{% block twitter_title %}Nossos Serviços - VB Med{% endblock %}
+{% block twitter_description %}Soluções tecnológicas para transformar a gestão de clínicas e hospitais. Saiba mais sobre os serviços da VB Med!{% endblock %}
+
 {% block content %}
+<div class="services-container">
+    <img src="{% static 'images/logo.png' %}" alt="VB Med - Serviços de Tecnologia para Saúde" class="services-logo">
+    <h1>Nossos <span>Serviços</span></h1>
+    <p>Oferecemos soluções tecnológicas para melhorar a gestão de clínicas, hospitais e consultórios.</p>
+
+    <div class="services-grid">
+        <div class="service-card">
+            <h2>📌 Prontuário Eletrônico do Paciente (PEP)</h2>
+            <p>Plataforma segura e intuitiva para armazenar e acessar registros médicos com facilidade.</p>
+            <a href="{% url 'pep:login' %}" class="btn" style="margin-top: 12px;">Acessar Sistema PEP</a>
+
+        </div>
+
+        <div class="service-card">
+            <h2>📊 Análise de Dados Médicos</h2>
+            <p>Utilizamos inteligência artificial para transformar dados clínicos em informações estratégicas.</p>
+        </div>
+
+        <div class="service-card">
+            <h2>🔒 Segurança e Conformidade</h2>
+            <p>Garantimos total conformidade com a LGPD e outras regulamentações para a proteção dos dados médicos.</p>
+        </div>
+
+        <div class="service-card">
+            <h2>💻 Desenvolvimento de Softwares Personalizados</h2>
+            <p>Criamos soluções sob medida para atender às necessidades específicas de cada instituição de saúde.</p>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <a href="/contact/" class="btn">Fale Conosco</a>
+    </div>
+</div>
+{% endblock %}
+
     <div class="services-container">
         <img src="{% static 'images/logo.png' %}" alt="VB Med - Serviços de Tecnologia para Saúde" class="services-logo">
         <h1>Nossos <span>Serviços</span></h1>

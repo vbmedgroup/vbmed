@@ -1,0 +1,22 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}{{ section|capfirst }} - {{ patient.name }}{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'pep/css/note_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>{{ section|capfirst }}</h2>
+<h4>{{ patient.name }}</h4>
+
+<form method="post" class="section-form">
+  {% csrf_token %}
+  <label for="content">Conteúdo:</label>
+  <textarea name="content" id="content" required></textarea>
+  <button type="submit">Salvar</button>
+</form>
+
+<a href="{% url 'pep:note_list' patient.id %}" class="back-link">← Voltar</a>
+{% endblock %}

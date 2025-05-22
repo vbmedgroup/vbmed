@@ -38,3 +38,7 @@ def contact_view(request):
             form = ContactForm()  # Resetando o formulário após envio
 
     return render(request, "contact.html", {"form": form})
+
+
+def teste_finalizado(request):
+    return render(request, 'teste_finalizado.html')

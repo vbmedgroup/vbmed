@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teste Finalizado - VB Med{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/teste_finalizado.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="teste-finalizado-container">
+  <h1>Obrigado por testar o sistema!</h1>
+  <p>Todos os dados de teste foram apagados com sucesso. Se quiser, você pode iniciar uma nova demonstração clicando abaixo.</p>
+
+  <a href="{% url 'pep:login' %}" class="btn">Testar o Sistema Novamente</a>
+
+  <div class="voltar-site">
+    <a href="{% url 'home' %}" class="btn-exit">← Voltar para o site</a>
+  </div>
+</div>
+{% endblock %}

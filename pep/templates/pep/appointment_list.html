@@ -1,0 +1,189 @@
+{% extends 'pep/base.html' %}
+
+{% block title %}Agendamentos do Dia{% endblock %}
+
+{% block extra_head %}
+  <style>
+    .appointments-container {
+      max-width: 900px;
+      margin: 60px auto;
+      background-color: #fff;
+      padding: 40px 50px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .appointments-container h2 {
+      font-size: 26px;
+      color: #184E77;
+      margin-bottom: 20px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .action-buttons button {
+      padding: 8px 16px;
+      font-size: 14px;
+      background-color: #184E77;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      flex: 1;
+    }
+
+    .action-buttons button:hover {
+      background-color: #123a5c;
+    }
+
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .filter-form label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .filter-form input,
+    .filter-form select {
+      padding: 10px 14px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .filter-form button {
+      padding: 10px 24px;
+      background-color: #184E77;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      height: 42px;
+      align-self: flex-end;
+    }
+
+    .filter-form button:hover {
+      background-color: #123a5c;
+    }
+
+    .appointment-card {
+      background-color: #f9f9f9;
+      padding: 18px 20px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .appointment-card strong {
+      color: #184E77;
+    }
+
+    .appointment-info {
+      font-size: 16px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .appointments-container {
+        padding: 25px 20px;
+        margin: 30px 15px;
+      }
+
+      .appointments-container h2 {
+        font-size: 22px;
+        text-align: center;
+      }
+
+      .action-buttons {
+        flex-direction: row;
+        gap: 8px;
+      }
+
+      .action-buttons button {
+        width: 50%;
+        padding: 10px 0;
+        font-size: 13px;
+      }
+
+      .filter-form {
+        flex-direction: column;
+      }
+
+      .filter-form button {
+        width: 100%;
+      }
+
+      .appointment-info {
+        font-size: 15px;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="appointments-container">
+    <h2>Agendamentos de {{ today|date:"d/m/Y" }}</h2>
+
+    <!-- Botões de Ação (MVP: sem funcionalidade) -->
+    <div class="action-buttons">
+      <button type="button">Imprimir</button>
+      <button type="button">Exportar PDF</button>
+    </div>
+
+    <!-- Formulário de Filtro -->
+    <form method="get" class="filter-form">
+      <div style="flex: 1; min-width: 160px;">
+        <label for="date">Data</label>
+        <input type="date" id="date" name="date" value="{{ today|date:'Y-m-d' }}">
+      </div>
+
+      {% if not is_doctor %}
+        <div style="flex: 1; min-width: 200px;">
+          <label for="professional">Médico</label>
+          <select id="professional" name="professional">
+            <option value="">Todos</option>
+            {% for doc in doctors %}
+              <option value="{{ doc.id }}" {% if selected_professional_id == doc.id|stringformat:"s" %}selected{% endif %}>
+                {{ doc.user.get_full_name|default:doc.user.username }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+
+      <div>
+        <button type="submit">Buscar</button>
+      </div>
+    </form>
+
+    <!-- Lista de Agendamentos -->
+    {% if appointments %}
+      {% for a in appointments %}
+        <div class="appointment-card">
+          <div class="appointment-info">
+            <strong>{{ a.time|time:"H:i" }}</strong><br>
+            Paciente: <strong>{{ a.patient.name }}</strong><br>
+            Médico: <strong>{{ a.professional.user.get_full_name|default:a.professional.user.username }}</strong><br>
+            Tipo: <strong>{{ a.get_type_display }}</strong>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>Nenhum agendamento encontrado para esta data.</p>
+    {% endif %}
+  </div>
+{% endblock %}

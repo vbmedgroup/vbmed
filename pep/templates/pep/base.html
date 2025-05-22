@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}VB ERP{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'pep/css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  {% block extra_head %}{% endblock %}
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    main {
+      padding: 15px;
+      padding-bottom: 70px;
+      flex-grow: 1;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar (Desktop) */
+    .sidebar {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        flex-direction: row;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 240px;
+        background-color: #184E77;
+        padding: 20px 10px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .sidebar a {
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 16px;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 8px;
+        transition: background 0.2s;
+      }
+
+      .sidebar a:hover {
+        background-color: #123a5c;
+      }
+
+      main {
+        margin-left: 240px;
+         padding: 30px 30px 30px 0px;
+      }
+    }
+
+    /* Exibir apenas no mobile */
+    .mobile-only {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      .mobile-only {
+        display: block;
+      }
+
+      .mobile-header {
+        background-color: #184E77;
+        color: white;
+        height: 50px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        z-index: 1001;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      .header-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .hamburger-button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 22px;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        display: flex;
+        width: 20px;
+        height: 20px;
+        justify-content: center;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .hamburger-button:hover {
+        background-color: none;
+      }
+
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        background-color: #184E77;
+        z-index: 1000;
+      }
+
+      .mobile-menu a {
+        color: white;
+        text-decoration: none;
+        padding: 14px 20px;
+        border-bottom: 1px solid #123a5c;
+        font-size: 16px;
+      }
+
+      .mobile-menu a:hover {
+        background-color: #123a5c;
+      }
+
+      .mobile-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: #184E77;
+        border-top: 1px solid #ccc;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 1000;
+        height: 50px;
+      }
+
+      .mobile-nav a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 20px;
+      }
+
+      .mobile-nav a.central {
+        font-size: 28px;
+      }
+
+      main {
+        padding-top: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+  <!-- Sidebar (Desktop) -->
+  <div class="sidebar">
+    <a href="{% url 'pep:home' %}" aria-label="Início"><i class="fas fa-home"></i> Início</a>
+    <a href="{% url 'pep:patient_list' %}"><i class="fas fa-user"></i> Pacientes</a>
+    <a href="{% url 'pep:appointment_list' %}" aria-label="Agendamentos"><i class="fas fa-calendar-check"></i> Agendamentos</a>
+    <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+    <a href="{% url 'pep:logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+  </div>
+
+  <!-- Mobile Header + Menu (aparece só no mobile) -->
+  <div class="mobile-only">
+    <header class="mobile-header">
+      <span class="header-title">VB</span>
+      <button id="hamburger" class="hamburger-button" aria-label="Abrir Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+      <a href="{% url 'pep:home' %}"><i class="fas fa-home"></i> Início</a>
+      <a href="{% url 'pep:patient_list' %}"><i class="fas fa-user"></i> Pacientes</a>
+      <a href="{% url 'pep:appointment_list' %}"><i class="fas fa-calendar-check"></i> Agendamentos</a>
+      <a href="#"><i class="fas fa-cog"></i> Configurações</a>
+      <a href="{% url 'pep:logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Bottom -->
+  <div class="mobile-nav">
+    <a href="{% url 'pep:home' %}" aria-label="Início"><i class="fas fa-home"></i></a>
+    <a href="{% url 'pep:patient_list' %}" aria-label="Pacientes"><i class="fas fa-user"></i></a>
+    <a href="{% url 'pep:patient_create' %}" class="central" aria-label="Nova Ficha"><i class="fas fa-plus-circle"></i></a>
+    <a href="{% url 'pep:appointment_list' %}" aria-label="Agendamentos"><i class="fas fa-calendar-check"></i></a>
+    <a href="#" aria-label="Configurações"><i class="fas fa-cog"></i></a>
+  </div>
+{% endif %}
+
+<!-- Conteúdo principal -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const hamburger = document.getElementById('hamburger');
+    const menu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    });
+  });
+</script>
+
+</body>
+</html>

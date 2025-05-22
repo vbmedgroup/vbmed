@@ -1,0 +1,20 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+{% block title %}Evolução{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Evolução</h2>
+<h4>{{ note.patient.name }}</h4>
+
+<div class="note-detail-card">
+  <strong class="note-detail-label">Data:</strong> {{ note.date|date:"d/m/Y H:i" }}<br><br>
+  <strong class="note-detail-label">Conteúdo:</strong>
+  <p class="note-detail-content">{{ note.content|linebreaksbr }}</p>
+</div>
+
+<a href="{% url 'pep:note_list' note.patient.id %}" class="back-link">← Voltar para lista de evoluções</a>
+{% endblock %}

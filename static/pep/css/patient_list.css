@@ -1,0 +1,47 @@
+/* static/pep/css/patient_list.css */
+h2 {
+    margin-bottom: 20px;
+    color: #184E77;
+  }
+  
+  .new-patient-btn {
+    display: inline-block;
+    margin: 10px;
+    background-color: #184E77;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 15px;
+  }
+  
+  .patient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .patient-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: transform 0.1s ease-in-out, box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .patient-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+  
+  .patient-name {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .empty-message {
+    color: #555;
+  }

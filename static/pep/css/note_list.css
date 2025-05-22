@@ -1,0 +1,119 @@
+  /* static/pep/css/note_list.css */
+
+h2 {
+    margin-bottom: 20px;
+    color: #184E77;
+  }
+  
+  .actions {
+    margin: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .actions a {
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 15px;
+    color: white;
+  }
+  
+  .actions .new-note {
+    background-color: #184E77;
+  }
+  
+  .actions .prescription {
+    background-color: rgb(65, 151, 48);
+  }
+  
+  .actions .back {
+    background-color: #ccc;
+    color: #333;
+  }
+  
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .note-card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .note-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: transform 0.1s ease-in-out, box-shadow 0.2s;
+  }
+  .note-card,
+  .note-detail-content {
+    white-space: pre-wrap;         /* mantém quebras de linha manuais */
+    word-wrap: break-word;         /* quebra palavras longas */
+    overflow-wrap: break-word;     /* mesma coisa para navegadores modernos */
+    line-height: 1.6;
+  }
+
+  .note-detail-card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    margin-bottom: 10px;
+  
+    /* 🔒 Impede conteúdo de sair do card */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  
+  .note-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+  
+  .note-author {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  
+  .empty-msg {
+    color: #555;
+  }
+
+  .note-detail-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  
+  .note-detail-label {
+    color: #184E77;
+    font-weight: bold;
+  }
+  
+  .note-detail-content {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #333;
+    white-space: pre-wrap;
+  }
+
+  .note-day-container {
+  max-width: 900px;
+  margin: 60px auto;
+  background-color: #fff;
+  padding: 40px 50px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
