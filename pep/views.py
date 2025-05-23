@@ -1,3 +1,5 @@
+import traceback
+from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import localtime
@@ -50,16 +52,19 @@ def user_logout(request):
 # Home 
 @login_required
 def home(request):
-    recent_unviewed = Patient.objects.filter(viewed=False).order_by('last_updated')
-    recent_viewed = Patient.objects.filter(viewed=True).order_by('last_updated')
-    recent_patients = list(recent_unviewed) + list(recent_viewed)
+    try:
+        recent_unviewed = Patient.objects.filter(viewed=False).order_by('last_updated')
+        recent_viewed = Patient.objects.filter(viewed=True).order_by('last_updated')
+        recent_patients = list(recent_unviewed) + list(recent_viewed)
 
-    news_list = News.objects.order_by('-published_at')
+        news_list = News.objects.order_by('-published_at')
 
-    return render(request, 'pep/home.html', {
-        'recent_patients': recent_patients,
-        'news_list': news_list,
-    })
+        return render(request, 'pep/home.html', {
+            'recent_patients': recent_patients,
+            'news_list': news_list,
+        })
+    except Exception:
+        return HttpResponseServerError(f"<pre>{traceback.format_exc()}</pre>")
     
 
 
