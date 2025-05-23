@@ -73,7 +73,7 @@
 
       main {
         margin-left: 240px;
-         padding: 30px 30px 30px 0px;
+        padding: 30px 30px 30px 0px;
       }
     }
 
@@ -158,22 +158,22 @@
         align-items: center;
         background-color: #184E77;
         border-top: 1px solid #ccc;
-        padding: 10px 0;
+        padding: 14px 0 25px 0;
         position: fixed;
         bottom: 0;
         width: 100%;
         z-index: 1000;
-        height: 50px;
+        height: 70px;
       }
 
       .mobile-nav a {
         color: #fff;
         text-decoration: none;
-        font-size: 20px;
+        font-size: 22px;
       }
 
       .mobile-nav a.central {
-        font-size: 28px;
+        font-size: 32px;
       }
 
       main {
@@ -194,7 +194,7 @@
     <a href="{% url 'pep:logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
   </div>
 
-  <!-- Mobile Header + Menu (aparece só no mobile) -->
+  <!-- Mobile Header + Menu -->
   <div class="mobile-only">
     <header class="mobile-header">
       <span class="header-title">VB</span>
@@ -203,7 +203,6 @@
       </button>
     </header>
 
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="mobile-menu">
       <a href="{% url 'pep:home' %}"><i class="fas fa-home"></i> Início</a>
       <a href="{% url 'pep:patient_list' %}"><i class="fas fa-user"></i> Pacientes</a>
@@ -223,7 +222,6 @@
   </div>
 {% endif %}
 
-<!-- Conteúdo principal -->
 <main>
   {% block content %}{% endblock %}
 </main>
