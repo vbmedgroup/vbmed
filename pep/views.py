@@ -21,25 +21,14 @@ from django.shortcuts import render, redirect
 # Login view
 def user_login(request):
     if request.user.is_authenticated:
-        print("[DEBUG] Usuário já autenticado, redirecionando para lista de pacientes.")
         return redirect('pep:patient_list')
 
     if request.method == 'POST':
-        print("[DEBUG] Requisição POST recebida com dados:")
-        print(request.POST)
-
         form = AuthenticationForm(data=request.POST)
-
         if form.is_valid():
-            print("[DEBUG] Formulário válido. Realizando login...")
             login(request, form.get_user())
             return redirect('pep:home')
-        else:
-            print("[DEBUG] Formulário inválido.")
-            print("[ERROS] ", form.errors)
-
     else:
-        print("[DEBUG] Requisição GET recebida. Exibindo formulário de login.")
         form = AuthenticationForm()
 
     return render(request, 'pep/login.html', {'form': form})
@@ -52,19 +41,16 @@ def user_logout(request):
 # Home 
 @login_required
 def home(request):
-    try:
-        recent_unviewed = Patient.objects.filter(viewed=False).order_by('last_updated')
-        recent_viewed = Patient.objects.filter(viewed=True).order_by('last_updated')
-        recent_patients = list(recent_unviewed) + list(recent_viewed)
+    recent_unviewed = Patient.objects.filter(viewed=False).order_by('last_updated')
+    recent_viewed = Patient.objects.filter(viewed=True).order_by('last_updated')
+    recent_patients = list(recent_unviewed) + list(recent_viewed)
 
-        news_list = News.objects.order_by('-published_at')
+    news_list = News.objects.order_by('-published_at')
 
-        return render(request, 'pep/home.html', {
-            'recent_patients': recent_patients,
-            'news_list': news_list,
-        })
-    except Exception:
-        return HttpResponseServerError(f"<pre>{traceback.format_exc()}</pre>")
+    return render(request, 'pep/home.html', {
+        'recent_patients': recent_patients,
+        'news_list': news_list,
+    })
     
 
 

@@ -1,6 +1,5 @@
-import traceback
+
 from django.contrib import messages
-from django.http import HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail
 from website.forms import ContactForm
@@ -12,10 +11,7 @@ def about(request):
     return render(request, 'about.html')
 
 def services(request):
-    try:
-        return render(request, 'services.html')
-    except Exception:
-        return HttpResponseServerError(f"<pre>{traceback.format_exc()}</pre>")
+    return render(request, 'services.html')
 
 def contact(request):
     return render(request, 'contact.html')
@@ -36,7 +32,7 @@ def contact_view(request):
                 f"Mensagem de {nome}",
                 mensagem,
                 email,  # E-mail do remetente
-                ['seuemail@dominio.com'],  # Substitua pelo seu e-mail de recebimento
+                ['grupovilabela@grupoviilabela.com'],  # Substitua pelo seu e-mail de recebimento
                 fail_silently=False,
             )
             
