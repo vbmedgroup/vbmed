@@ -5,31 +5,31 @@
 
 {% block extra_head %}
   <style>
-    .schedule-container {
+    .agendamento-view .schedule-container {
       max-width: 900px;
-      margin: 80px auto;
+      margin: 0 auto;
       background: #fff;
       padding: 50px 60px;
       border-radius: 14px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
 
-    .header {
+    .agendamento-view .header {
       margin-bottom: 30px;
     }
 
-    .header h2 {
+    .agendamento-view .header h2 {
       font-size: 28px;
       color: #184E77;
       margin-bottom: 10px;
     }
 
-    .sub-header {
+    .agendamento-view .sub-header {
       font-size: 18px;
       color: #444;
     }
 
-    .btn-back {
+    .agendamento-view .btn-back {
       background-color: #184E77;
       color: white;
       padding: 10px 20px;
@@ -40,33 +40,35 @@
       margin-top: 10px;
     }
 
-    .btn-back:hover {
+    .agendamento-view .btn-back:hover {
       background-color: #123a5c;
     }
 
-    .message-list {
+    .agendamento-view .message-list {
       list-style: none;
       padding-left: 0;
       margin-bottom: 30px;
     }
 
-    .message-list li {
+    .agendamento-view .message-list li {
       font-weight: bold;
     }
 
-    form {
+    .agendamento-view form {
       display: flex;
       flex-direction: column;
       gap: 20px;
       margin-bottom: 40px;
     }
 
-    label {
+    .agendamento-view label {
       font-weight: bold;
       margin-bottom: 6px;
     }
 
-    input, select, textarea {
+    .agendamento-view input,
+    .agendamento-view select,
+    .agendamento-view textarea {
       padding: 10px 14px;
       font-size: 15px;
       border: 1px solid #ccc;
@@ -74,7 +76,7 @@
       width: 100%;
     }
 
-    button {
+    .agendamento-view button {
       padding: 12px 28px;
       background-color: #184E77;
       color: white;
@@ -85,22 +87,22 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .agendamento-view button:hover {
       background-color: #123a5c;
     }
 
     @media (max-width: 768px) {
-      .schedule-container {
+      .agendamento-view .schedule-container {
         padding: 30px 20px;
-        margin: 40px 15px;
+        margin: 0 15px;
       }
 
-      button {
+      .agendamento-view button {
         width: 100%;
         text-align: center;
       }
 
-      .btn-back {
+      .agendamento-view .btn-back {
         max-width: 150px;
         font-size: 14px;
         padding: 8px 14px;
@@ -110,81 +112,83 @@
 {% endblock %}
 
 {% block content %}
-<div class="schedule-container">
-  <!-- Cabeçalho -->
-  <div class="header">
-    <h2>Agendamento</h2>
-    <div class="sub-header">
-      Paciente: <strong>{{ patient.name }}</strong><br>
-      {% if is_doctor %}
-        Médico: <strong>
-        {% if doctor.user.get_full_name %}
-          {{ doctor.user.get_full_name }}
-        {% else %}
-          {{ doctor.user.username }}
+<div class="agendamento-view">
+  <div class="schedule-container">
+    <!-- Cabeçalho -->
+    <div class="header">
+      <h2>Agendamento</h2>
+      <div class="sub-header">
+        Paciente: <strong>{{ patient.name }}</strong><br>
+        {% if is_doctor %}
+          Médico: <strong>
+          {% if doctor.user.get_full_name %}
+            {{ doctor.user.get_full_name }}
+          {% else %}
+            {{ doctor.user.username }}
+          {% endif %}
+        </strong>
         {% endif %}
-      </strong>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- Mensagens -->
-  {% if messages %}
-    <ul class="message-list">
-      {% for message in messages %}
-        <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
-          {{ message }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  <!-- Formulário GET para buscar horários -->
-  <form method="get">
-    <div>
-      {{ form.date.label_tag }}
-      {{ form.date }}
-    </div>
-
-    {% if not is_doctor %}
-      <div>
-        {{ form.professional.label_tag }}
-        {{ form.professional }}
       </div>
-    {% else %}
-      <input type="hidden" name="professional" value="{{ doctor.id }}">
+    </div>
+
+    <!-- Mensagens -->
+    {% if messages %}
+      <ul class="message-list">
+        {% for message in messages %}
+          <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
     {% endif %}
 
-    <button type="submit">Buscar horários</button>
-  </form>
+    <!-- Formulário GET para buscar horários -->
+    <form method="get">
+      <div>
+        {{ form.date.label_tag }}
+        {{ form.date }}
+      </div>
 
-  <!-- Formulário POST para confirmar agendamento -->
-  {% if available_times %}
-    <form method="post">
-      {% csrf_token %}
-      <input type="hidden" name="date" value="{{ form.date.value }}">
-      {% if is_doctor %}
-        <input type="hidden" name="professional" value="{{ doctor.id }}">
+      {% if not is_doctor %}
+        <div>
+          {{ form.professional.label_tag }}
+          {{ form.professional }}
+        </div>
       {% else %}
-        <input type="hidden" name="professional" value="{{ form.professional.value }}">
+        <input type="hidden" name="professional" value="{{ doctor.id }}">
       {% endif %}
 
-      <div>
-        <label for="id_time">Horário disponível</label>
-        <select name="time" id="id_time" required>
-          {% for t in available_times %}
-            <option value="{{ t|time:'H:i' }}">{{ t|time:'H:i' }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div>
-        {{ form.type.label_tag }}
-        {{ form.type }}
-      </div>
-
-      <button type="submit">Confirmar Agendamento</button>
+      <button type="submit">Buscar horários</button>
     </form>
-  {% endif %}
+
+    <!-- Formulário POST para confirmar agendamento -->
+    {% if available_times %}
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="date" value="{{ form.date.value }}">
+        {% if is_doctor %}
+          <input type="hidden" name="professional" value="{{ doctor.id }}">
+        {% else %}
+          <input type="hidden" name="professional" value="{{ form.professional.value }}">
+        {% endif %}
+
+        <div>
+          <label for="id_time">Horário disponível</label>
+          <select name="time" id="id_time" required>
+            {% for t in available_times %}
+              <option value="{{ t|time:'H:i' }}">{{ t|time:'H:i' }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          {{ form.type.label_tag }}
+          {{ form.type }}
+        </div>
+
+        <button type="submit">Confirmar Agendamento</button>
+      </form>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
