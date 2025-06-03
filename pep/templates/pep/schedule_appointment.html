@@ -131,17 +131,6 @@
       </div>
     </div>
 
-    <!-- Mensagens -->
-    {% if messages %}
-      <ul class="message-list">
-        {% for message in messages %}
-          <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
-            {{ message }}
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-
     <!-- Formulário GET para buscar horários -->
     <form method="get">
       <div>

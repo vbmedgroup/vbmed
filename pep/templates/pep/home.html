@@ -22,7 +22,10 @@
   <div class="scroll-row">
     {% for patient in recent_patients %}
       <a href="{% url 'pep:note_list' patient.id %}" style="text-decoration: none; color: inherit;">
-        <div class="card {% if not patient.viewed %}not-viewed{% endif %}">
+      <div class="card
+        {% if not patient.is_visualized and patient.is_new %} border-orange
+        {% elif not patient.is_visualized and patient.was_updated %} border-green
+        {% endif %}">
           <div class="card-name">{{ patient.name }}</div>
           <div class="card-date">{{ patient.last_updated|date:"d/m/Y H:i" }}</div>
           <div class="card-reason">{{ patient.get_visit_reason_display }}</div>

@@ -49,6 +49,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # 🚨 Proteção contra CSRF
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'vbmed.middleware.DemoAutoResetMiddleware',
+    'vbmed.middleware.TesteFinalizadoRedirectMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

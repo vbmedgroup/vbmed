@@ -16,6 +16,15 @@
     h4 {
       color: #184E77;
     }
+    
+    .message-list {
+          list-style: none;
+          padding-left: 0;
+          margin-bottom: 30px;
+    }
+    .message-list li {
+      font-weight: bold;
+    }
 
     .card-grid {
       display: grid;
@@ -117,26 +126,29 @@
       white-space: pre-wrap;
     }
 
-    .btn-agendar {
-      display: inline-block;
-      margin-top: 30px;
-      background-color: #184E77;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: bold;
-      text-decoration: none;
-    }
   </style>
 {% endblock %}
 
 {% block content %}
 <div class="header-bar">
   <h2>Nova Evolução</h2>
-  <a href="{% url 'pep:pep_reset_and_exit' %}" class="btn-principal">← Voltar</a>
+  <a href="{% url 'pep:note_list' patient.id %}" class="btn-principal">← Voltar</a>
 </div>
 
+<!-- Mensagens -->
+{% if messages %}
+  <ul class="message-list">
+    {% for message in messages %}
+      <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+        {{ message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
 <h4>{{ patient.name }}</h4>
+
+
 
 {% if section %}
   <div class="note-form">
@@ -166,7 +178,6 @@
   </div>
 
   <div class="btn-bottom">
-    <a href="{% url 'pep:schedule_appointment' patient.id %}" class="btn-agendar">📅 Agendar Consulta ou Exame</a>
     <a href="{% url 'pep:note_list' patient.id %}">Ver anotações anteriores</a>
   </div>
 

@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail
@@ -17,7 +16,6 @@ def contact(request):
     return render(request, 'contact.html')
 
 def contact_view(request):
-
     form = ContactForm()
     
     if request.method == "POST":
@@ -32,7 +30,7 @@ def contact_view(request):
                 f"Mensagem de {nome}",
                 mensagem,
                 email,  # E-mail do remetente
-                ['grupovilabela@grupoviilabela.com'],  # Substitua pelo seu e-mail de recebimento
+                ['grupovilabela@grupovilabela.com'],  # Substitua pelo seu e-mail de recebimento
                 fail_silently=False,
             )
             
@@ -41,5 +39,6 @@ def contact_view(request):
 
     return render(request, "contact.html", {"form": form})
 
+
 def teste_finalizado(request):
-        return render(request, 'teste_finalizado.html')
+    return render(request, 'teste_finalizado.html')

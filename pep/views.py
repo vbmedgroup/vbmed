@@ -1,37 +1,77 @@
-import traceback
-from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import localtime
 from collections import defaultdict
 from pep.forms import AppointmentForm, PatientForm
+from pep.utils.general import post_login_redirect
 from .models import Appointment, Doctor, News, Patient, Note
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from datetime import datetime
 from django.utils import timezone
+import random
 from django.contrib import messages
-from datetime import time, timedelta, datetime
+from datetime import time, timedelta, datetime, date
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
+from django.utils.crypto import get_random_string
 
 
-# Login view
 def user_login(request):
     if request.user.is_authenticated:
-        return redirect('pep:patient_list')
+        return redirect('pep:home')  # ou post_login_redirect(request)
 
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
+
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('pep:home')
+            return post_login_redirect(request)
     else:
         form = AuthenticationForm()
 
     return render(request, 'pep/login.html', {'form': form})
+
+
+def test_drive_view(request):
+    # Geração de dados fictícios
+    username = f"demo_{get_random_string(8)}"
+    password = get_random_string(12)
+    email = f"{username}@teste.com"
+
+    # Criação do usuário
+    user = User.objects.create_user(username=username, email=email, password=password, first_name="Demo", last_name="User")
+
+    # Criação do médico com flag de demo
+    doctor = Doctor.objects.create(
+        user=user,
+        crm="0000-DEMO",
+        specialty="Clínico Geral",
+        is_demo=True,
+        created_at=timezone.now()
+    )
+
+    # Criação de 100 pacientes fictícios
+    for i in range(100):
+        name = f"Paciente {i+1}"
+        cpf = f"{random.randint(10000000000, 99999999999)}"
+        birth_date = date.today() - timedelta(days=random.randint(20*365, 80*365))
+
+        Patient.objects.create(
+            name=name,
+            cpf=cpf,
+            birth_date=birth_date,
+            is_demo=True  # só se você criou esse campo no model Patient
+        )
+
+    # Login automático
+    login(request, user)
+
+    # Redireciona para lógica pós-login
+    from .utils import post_login_redirect
+    return post_login_redirect(request)
 
 
 def user_logout(request):
@@ -45,13 +85,20 @@ def home(request):
     recent_viewed = Patient.objects.filter(viewed=True).order_by('last_updated')
     recent_patients = list(recent_unviewed) + list(recent_viewed)
 
+    # Lógica refinada para identificar status dos cards
+    for p in recent_patients:
+        time_diff = abs((p.last_updated - p.arrival_datetime).total_seconds())
+
+        p.is_new = time_diff < 5  # considerado novo se criado recentemente
+        p.was_updated = time_diff >= 5  # atualizado se houve modificação relevante
+        p.is_visualized = p.last_viewed_at and p.last_viewed_at >= p.last_updated
+
     news_list = News.objects.order_by('-published_at')
 
     return render(request, 'pep/home.html', {
         'recent_patients': recent_patients,
         'news_list': news_list,
     })
-    
 
 
 @login_required
@@ -65,8 +112,14 @@ def patient_create(request):
     if request.method == 'POST':
         form = PatientForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('pep:home')  # ou 'patient_list'
+            patient = form.save(commit=False)
+
+            # Se for médico em modo de demonstração, marcar o paciente como demo
+            if hasattr(request.user, 'doctor') and request.user.doctor.is_demo:
+                patient.is_demo = True
+
+            patient.save()
+            return redirect('pep:home')  # ou 'pep:patient_list'
     else:
         form = PatientForm()
 
@@ -288,20 +341,6 @@ def appointment_list(request):
         'is_doctor': is_doctor,
         'selected_professional_id': professional_id
     })
-
-
-# Retirar ou comentar em produção
-@login_required
-def pep_reset_and_exit(request):
-    # Apagar tudo
-    Patient.objects.all().delete()
-    Note.objects.all().delete()
-    
-    # Logout do usuário
-    logout(request)
-    
-    # Redirecionar de volta para o site
-    return redirect("/teste_finalizado/")  # coloque aqui a URL real do seu site
 
 
 @login_required
