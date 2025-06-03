@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static %} 
 
-{% block title %}Nossos Serviços - Grupo Vila Bela{% endblock %}
-{% block meta_description %}Conheça os serviços do Grupo Vila Bela e descubra como nossas soluções tecnológicas podem transformar a gestão médica.{% endblock %}
-{% block og_title %}Nossos Serviços - Grupo Vila Bela{% endblock %}
+{% block title %}Nossos Serviços - VB Med{% endblock %}
+{% block meta_description %}Conheça os serviços da VB Med e descubra como nossas soluções tecnológicas podem transformar a gestão médica.{% endblock %}
+{% block og_title %}Nossos Serviços - VB Med{% endblock %}
 {% block og_description %}Prontuário eletrônico, análise de dados médicos, segurança da informação e desenvolvimento de software para clínicas e hospitais.{% endblock %}
-{% block twitter_title %}Nossos Serviços - Grupo Vila Bela{% endblock %}
+{% block twitter_title %}Nossos Serviços - VB Med{% endblock %}
 {% block twitter_description %}Soluções tecnológicas para transformar a gestão de clínicas e hospitais. Saiba mais sobre os serviços da VB Med!{% endblock %}
 
 {% block content %}
 <div class="services-container">
-    <img src="{% static 'images/logo.png' %}" alt="Grupo Vila Bela - Serviços de Tecnologia para Saúde" class="services-logo">
+    <img src="{% static 'images/logo.png' %}" alt="VB Med - Serviços de Tecnologia para Saúde" class="services-logo">
     <h1>Nossos <span>Serviços</span></h1>
     <p>Oferecemos soluções tecnológicas para melhorar a gestão de clínicas, hospitais e consultórios.</p>
 
@@ -18,7 +18,7 @@
         <div class="service-card">
             <h2>📌 Prontuário Eletrônico do Paciente (PEP)</h2>
             <p>Plataforma segura e intuitiva para armazenar e acessar registros médicos com facilidade.</p>
-            <a href="{% url 'pep:login' %}" class="btn" style="margin-top: 12px;">Acessar Sistema PEP</a>
+            <a href="{% url 'pep:testar' %}" class="btn" style="margin-top: 12px;">Testar o Sistema Gratuitamente</a>
         </div>
 
         <div class="service-card">
