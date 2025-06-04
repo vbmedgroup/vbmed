@@ -70,7 +70,7 @@ def test_drive_view(request):
     login(request, user)
 
     # Redireciona para lógica pós-login
-    from .utils import post_login_redirect
+    from pep.utils.general import post_login_redirect
     return post_login_redirect(request)
 
 
