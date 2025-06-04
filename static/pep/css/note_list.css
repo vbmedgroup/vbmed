@@ -18,7 +18,20 @@ h2 {
     text-decoration: none;
     font-weight: bold;
     font-size: 15px;
+    background-color: #184E77;
     color: white;
+  }
+
+  .actions a
+  .btn-agendar {
+  display: inline-block;
+  margin-top: 30px;
+  background-color: #184E77;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
   }
   
   .actions .new-note {
