@@ -5,7 +5,25 @@ from datetime import date, timedelta
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.models import User
-from pep.models import Doctor, Patient
+from pep.models import Appointment, Doctor, Note, Patient
+
+def clear_demo_data(doctor):
+    user = doctor.user
+
+    if user.is_superuser:
+        return  # Segurança extra para não apagar admin
+
+    # Apaga agendamentos do médico
+    Appointment.objects.filter(professional=doctor).delete()
+
+    # Apaga notas feitas por esse médico
+    Note.objects.filter(professional=user).delete()
+
+    # Apaga o usuário e o Doctor (via on_delete=CASCADE)
+    user.delete()
+
+    # Apaga todos os pacientes marcados como demo
+    Patient.objects.filter(is_demo=True).delete()
 
 def run_demo_seed():
     username = f"demo_{get_random_string(8)}"

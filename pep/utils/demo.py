@@ -17,5 +17,5 @@ def clear_demo_data(doctor):
 def create_demo_data(doctor):
     # Reaproveite aqui sua lógica que cria os 1000 pacientes, etc.
     # Exemplo:
-    from pep.utils import run_demo_seed
+    from pep.demo_seeder import run_demo_seed
     run_demo_seed(doctor)
