@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, now, make_aware
 from collections import defaultdict
 from pep.forms import AppointmentForm, PatientForm
 from pep.utils.general import post_login_redirect
@@ -234,9 +234,21 @@ def get_available_times(date, professional):
     current = datetime.combine(date, start)
     end_dt = datetime.combine(date, end)
 
+    now_local = localtime(now())
+    is_today = date == now_local.date()
+
     while current <= end_dt:
-        if not Appointment.objects.filter(professional=professional, date=date, time=current.time()).exists():
-            times.append(current.time())
+        current_time = current.time()
+
+        # Oculta horários passados se a data for hoje
+        if is_today and datetime.combine(date, current_time) < now_local:
+            current += interval
+            continue
+
+        # Verifica se o horário está livre
+        if not Appointment.objects.filter(professional=professional, date=date, time=current_time).exists():
+            times.append(current_time)
+
         current += interval
 
     return times
@@ -257,13 +269,14 @@ def schedule_appointment(request, patient_id):
     if request.method == 'POST':
         data = request.POST.copy()
         selected_date = data.get('date')
-        selected_doctor_id = data.get('professional') if not is_doctor else doctor_instance.id
         selected_time = data.get('time')
+        selected_doctor_id = data.get('professional') if not is_doctor else doctor_instance.id
 
         if is_doctor:
             data['professional'] = doctor_instance.id
 
         form = AppointmentForm(data, user=user)
+
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.patient = patient
@@ -272,24 +285,36 @@ def schedule_appointment(request, patient_id):
             if is_doctor:
                 appointment.professional = doctor_instance
 
-            # Verifica conflito
-            conflict = Appointment.objects.filter(
-                professional=appointment.professional,
-                date=appointment.date,
-                time=appointment.time
-            ).exists()
+            # Verifica se está agendando para o passado
+            appointment_datetime_str = f"{appointment.date} {appointment.time}"
+            try:
+                appointment_datetime_naive = datetime.strptime(appointment_datetime_str, "%Y-%m-%d %H:%M")
+                appointment_datetime = make_aware(appointment_datetime_naive)
 
-            if conflict:
-                messages.error(request, "Este horário já está agendado para o profissional selecionado.")
-            else:
-                appointment.save()
-                messages.success(request, "Agendamento realizado com sucesso.")
-                return redirect('pep:note_create', patient_id=patient.id)
+                if appointment_datetime < now():
+                    messages.error(request, "❌ Não é possível agendar em data ou horário anterior ao momento atual.")
+                else:
+                    conflict = Appointment.objects.filter(
+                        professional=appointment.professional,
+                        date=appointment.date,
+                        time=appointment.time
+                    ).exists()
+
+                    if conflict:
+                        messages.error(request, "❌ Este horário já está agendado para o profissional selecionado.")
+                    else:
+                        appointment.save()
+                        messages.success(request, "✅ Agendamento realizado com sucesso.")
+                        return redirect('pep:note_create', patient_id=patient.id)
+            except ValueError:
+                messages.error(request, "❌ Data ou hora em formato inválido.")
         else:
-            messages.error(request, "Por favor, corrija os erros do formulário.")
+            messages.error(request, "⚠️ Dados inválidos. Verifique o formulário.")
     else:
         selected_date = request.GET.get('date')
-        selected_doctor_id = request.GET.get('professional') if not is_doctor else (doctor_instance.id if doctor_instance else None)
+        selected_doctor_id = request.GET.get('professional') if not is_doctor else (
+            doctor_instance.id if doctor_instance else None
+        )
 
         form = AppointmentForm(user=user, initial={
             'date': selected_date,
@@ -298,11 +323,14 @@ def schedule_appointment(request, patient_id):
 
         if selected_date and selected_doctor_id:
             try:
-                date = datetime.strptime(selected_date, "%Y-%m-%d").date()
+                date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
                 professional = get_object_or_404(Doctor, pk=selected_doctor_id)
-                available_times = get_available_times(date, professional)
+                available_times = get_available_times(date_obj, professional)
+
+                if not available_times:
+                    messages.error(request, "❌ Não há mais horários disponíveis nesta data.")
             except Exception:
-                pass
+                messages.error(request, "⚠️ Erro ao buscar horários. Verifique a data ou profissional selecionado.")
 
     context = {
         'patient': patient,

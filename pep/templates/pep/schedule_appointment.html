@@ -1,5 +1,6 @@
 {% extends 'pep/base.html' %}
 {% load static %}
+{% load tz %}
 
 {% block title %}Agendamento - {{ patient.name }}{% endblock %}
 
@@ -91,6 +92,10 @@
       background-color: #123a5c;
     }
 
+    ul, .message-list{
+      margin-top: 15px;
+    }
+
     @media (max-width: 768px) {
       .agendamento-view .schedule-container {
         padding: 30px 20px;
@@ -112,6 +117,7 @@
 {% endblock %}
 
 {% block content %}
+{% with today=now|date:"Y-m-d" %}
 <div class="agendamento-view">
   <div class="schedule-container">
     <!-- Cabeçalho -->
@@ -129,13 +135,22 @@
         </strong>
         {% endif %}
       </div>
+      {% if messages %}
+        <ul class="message-list">
+          {% for message in messages %}
+            <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
 
     <!-- Formulário GET para buscar horários -->
     <form method="get">
       <div>
         {{ form.date.label_tag }}
-        {{ form.date }}
+        <input type="date" name="date" id="id_date" value="{{ form.date.value }}" min="{{ today }}">
       </div>
 
       {% if not is_doctor %}
@@ -180,4 +195,5 @@
     {% endif %}
   </div>
 </div>
+{% endwith %}
 {% endblock %}

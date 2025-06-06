@@ -1,6 +1,7 @@
 from django import forms
 from .models import Appointment, Doctor, Patient
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 #Formulário para gerar novo paciente
 class PatientForm(forms.ModelForm):
@@ -43,12 +44,17 @@ class AppointmentForm(forms.ModelForm):
         fields = ['date', 'professional', 'type']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
         # Se for médico logado, remove o campo 'professional'
-        if user and Doctor.objects.filter(user=user).exists():
+        if self.user and Doctor.objects.filter(user=self.user).exists():
             self.fields.pop('professional')
         else:
-            # Caso seja recepção, exibe a lista de médicos
             self.fields['professional'].queryset = Doctor.objects.select_related('user').all()
+
+    def clean_date(self):
+        selected_date = self.cleaned_data.get('date')
+        if selected_date < now().date():
+            raise forms.ValidationError("Não é possível agendar para uma data no passado.")
+        return selected_date
