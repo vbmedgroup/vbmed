@@ -1,0 +1,22 @@
+{% extends 'pep/base.html' %}
+{% block title %}Agendamentos - {{ patient.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Agendamentos de {{ patient.name }}</h2>
+
+  {% if appointments %}
+    <ul class="list-group">
+      {% for a in appointments %}
+        <li class="list-group-item">
+          <strong>{{ a.date|date:"d/m/Y" }} {{ a.time }}</strong><br>
+          Tipo: {{ a.get_type_display }}<br>
+          Profissional: {{ a.professional }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nenhum agendamento encontrado.</p>
+  {% endif %}
+</div>
+{% endblock %}
