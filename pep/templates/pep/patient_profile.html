@@ -1,0 +1,37 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}Perfil - {{ patient.name }}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/patient.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+  <div class="profile-card">
+    <div class="avatar-circle">
+      <span class="initials">{{ patient.name|slice:":1"|upper }}</span>
+    </div>
+    <h2 class="patient-name">{{ patient.name }}</h2>
+    <p class="patient-info">
+      CPF: {{ patient.cpf }}{% if patient.birth_date %} | Nasc.: {{ patient.birth_date|date:"d/m/Y" }}{% endif %}
+    </p>
+
+    <div class="summary-box">
+      <a href="{% url 'pep:note_list' patient.id %}" class="summary-item">
+        <span class="label">Evoluções</span>
+        <span class="value">{{ evolutions.count }}</span>
+      </a>
+      <a href="{% url 'pep:prescription_list' patient.id %}" class="summary-item">
+        <span class="label">Prescrições</span>
+        <span class="value">{{ prescriptions.count }}</span>
+      </a>
+      <a href="{% url 'pep:patient_appointment_list' patient.id %}" class="summary-item">
+        <span class="label">Agendamentos</span>
+        <span class="value">{{ appointments.count }}</span>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

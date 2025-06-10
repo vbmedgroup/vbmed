@@ -50,9 +50,10 @@ class Doctor(models.Model):
     crm = models.CharField(max_length=20, blank=True, null=True)
     specialty = models.CharField(max_length=100, blank=True, null=True)
 
-    # Adições:
+    # Demo usage tracking
     is_demo = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
+    last_demo_activity = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.user.get_full_name() or self.user.username
@@ -105,3 +106,13 @@ class News(models.Model):
     def __str__(self):
         return self.title
 
+
+class Prescription(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointment, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    content = models.TextField("Conteúdo da prescrição")
+
+    def __str__(self):
+        return f"Prescrição de {self.doctor} para {self.patient} em {self.created_at.strftime('%d/%m/%Y')}"

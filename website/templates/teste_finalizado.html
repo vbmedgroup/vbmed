@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Teste Finalizado - Grupo Vila Bela{% endblock %}
+{% block title %}Teste Finalizado - VB Med{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'css/teste_finalizado.css' %}">
@@ -9,10 +9,13 @@
 
 {% block content %}
 <div class="teste-finalizado-container">
-  <h1>Obrigado por testar o sistema!</h1>
-  <p>Todos os dados de teste foram apagados com sucesso. Se quiser, você pode iniciar uma nova demonstração clicando abaixo.</p>
+  <h1>⏰ Sessão de Teste Finalizada</h1>
+  <p>
+    Sua sessão de demonstração expirou e todos os dados temporários foram apagados com sucesso.<br>
+    Se desejar, você pode iniciar uma nova demonstração clicando no botão abaixo.
+  </p>
 
-  <a href="{% url 'pep:login' %}" class="btn">Testar o Sistema Novamente</a>
+  <a href="{% url 'pep:login' %}" class="btn">🔁 Testar o Sistema Novamente</a>
 
   <div class="voltar-site">
     <a href="{% url 'home' %}" class="btn-exit">← Voltar para o site</a>

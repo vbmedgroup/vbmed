@@ -19,6 +19,10 @@ urlpatterns = [
     path('preencher/<int:patient_id>/<str:section>/', views.fill_section, name='fill_section'),
     path('pacientes/<int:patient_id>/agendar/', views.schedule_appointment, name='schedule_appointment'),
     path('agendamentos/', views.appointment_list, name='appointment_list'),
+    path('pacientes/<int:patient_id>/agendamentos/', views.patient_appointment_list, name='patient_appointment_list'),
+    path('pacientes/<int:patient_id>/prescrever/', views.create_prescription, name='create_prescription'),
+    path('pacientes/<int:patient_id>/prescricoes/', views.prescription_list, name='prescription_list'),
+    path('pacientes/<int:pk>/', views.patient_profile, name='patient_profile'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

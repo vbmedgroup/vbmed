@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import localtime, now, make_aware
 from collections import defaultdict
-from pep.forms import AppointmentForm, PatientForm
+from pep.forms import AppointmentForm, PatientForm, PrescriptionForm
 from pep.utils.general import post_login_redirect
-from .models import Appointment, Doctor, News, Patient, Note
+from .models import Appointment, Doctor, News, Patient, Note, Prescription
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from datetime import datetime
@@ -36,25 +36,44 @@ def user_login(request):
 
 
 def test_drive_view(request):
-    # Geração de dados fictícios
+    agora = timezone.now()
+    tempo_limite = agora - timedelta(minutes=30)
+
+    # Tenta encontrar um médico demo criado nos últimos 30 minutos
+    doctor = Doctor.objects.filter(is_demo=True, created_at__gte=tempo_limite).first()
+
+    if doctor:
+        # Já existe demo válido → login automático
+        login(request, doctor.user)
+        return post_login_redirect(request)
+
+    # Caso não exista, limpa os dados antigos (se ainda restarem)
+    Doctor.objects.filter(is_demo=True).delete()
+    Patient.objects.filter(is_demo=True).delete()
+
+    # Geração de novo médico e paciente demo
     username = f"demo_{get_random_string(8)}"
     password = get_random_string(12)
     email = f"{username}@teste.com"
 
-    # Criação do usuário
-    user = User.objects.create_user(username=username, email=email, password=password, first_name="Demo", last_name="User")
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password,
+        first_name="Demo",
+        last_name="User"
+    )
 
-    # Criação do médico com flag de demo
     doctor = Doctor.objects.create(
         user=user,
         crm="0000-DEMO",
         specialty="Clínico Geral",
         is_demo=True,
-        created_at=timezone.now()
+        created_at=agora
     )
 
-    # Criação de 100 pacientes fictícios
-    for i in range(100):
+    # Criação de 10 pacientes fictícios
+    for i in range(10):
         name = f"Paciente {i+1}"
         cpf = f"{random.randint(10000000000, 99999999999)}"
         birth_date = date.today() - timedelta(days=random.randint(20*365, 80*365))
@@ -63,14 +82,10 @@ def test_drive_view(request):
             name=name,
             cpf=cpf,
             birth_date=birth_date,
-            is_demo=True  # só se você criou esse campo no model Patient
+            is_demo=True
         )
 
-    # Login automático
     login(request, user)
-
-    # Redireciona para lógica pós-login
-    from pep.utils.general import post_login_redirect
     return post_login_redirect(request)
 
 
@@ -99,6 +114,23 @@ def home(request):
         'recent_patients': recent_patients,
         'news_list': news_list,
     })
+
+
+def patient_profile(request, pk):
+    patient = get_object_or_404(Patient, pk=pk)
+
+    # Coletando os dados reais do paciente
+    evolutions = Note.objects.filter(patient=patient)
+    prescriptions = Prescription.objects.filter(patient=patient)
+    appointments = Appointment.objects.filter(patient=patient)
+
+    context = {
+        'patient': patient,
+        'evolutions': evolutions,
+        'prescriptions': prescriptions,
+        'appointments': appointments,
+    }
+    return render(request, 'pep/patient_profile.html', context)
 
 
 @login_required
@@ -253,7 +285,6 @@ def get_available_times(date, professional):
 
     return times
 
-
 @login_required
 def schedule_appointment(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
@@ -341,6 +372,7 @@ def schedule_appointment(request, patient_id):
     }
     return render(request, 'pep/schedule_appointment.html', context)
 
+
 @login_required
 def appointment_list(request):
     user = request.user
@@ -368,6 +400,49 @@ def appointment_list(request):
         'doctors': doctors,
         'is_doctor': is_doctor,
         'selected_professional_id': professional_id
+    })
+
+def patient_appointment_list(request, patient_id):
+    patient = get_object_or_404(Patient, pk=patient_id)
+    appointments = Appointment.objects.filter(patient=patient).order_by('-date', '-time')
+
+    return render(request, 'pep/patient_appointment_list.html', {
+        'patient': patient,
+        'appointments': appointments,
+    })
+
+
+@login_required
+def create_prescription(request, patient_id):
+    patient = get_object_or_404(Patient, pk=patient_id)
+    doctor = get_object_or_404(Doctor, user=request.user)
+
+    if request.method == 'POST':
+        form = PrescriptionForm(request.POST)
+        if form.is_valid():
+            prescription = form.save(commit=False)
+            prescription.patient = patient
+            prescription.doctor = doctor
+            prescription.save()
+            messages.success(request, "✅ Prescrição registrada com sucesso.")
+            return redirect('pep:patient_detail', patient_id=patient.id)
+        else:
+            messages.error(request, "❌ Corrija os erros no formulário.")
+    else:
+        form = PrescriptionForm()
+
+    return render(request, 'pep/create_prescription.html', {
+        'form': form,
+        'patient': patient,
+    })
+
+def prescription_list(request, patient_id):
+    patient = get_object_or_404(Patient, pk=patient_id)
+    prescriptions = Prescription.objects.filter(patient=patient).order_by('-created_at')
+
+    return render(request, 'pep/prescription_list.html', {
+        'patient': patient,
+        'prescriptions': prescriptions
     })
 
 

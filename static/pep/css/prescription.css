@@ -1,0 +1,71 @@
+.prescription-view .prescription-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 50px 60px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.prescription-view .header {
+  margin-bottom: 30px;
+}
+
+.prescription-view .header h2 {
+  font-size: 28px;
+  color: #184E77;
+  margin-bottom: 10px;
+}
+
+.prescription-view .sub-header {
+  font-size: 18px;
+  color: #444;
+}
+
+.prescription-view form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.prescription-view label {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.prescription-view textarea {
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  min-height: 200px;
+}
+
+.prescription-view button {
+  padding: 12px 28px;
+  background-color: #184E77;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.prescription-view button:hover {
+  background-color: #123a5c;
+}
+
+@media (max-width: 768px) {
+  .prescription-view .prescription-container {
+    padding: 30px 20px;
+    margin: 0 15px;
+  }
+
+  .prescription-view button {
+    width: 100%;
+    text-align: center;
+  }
+}

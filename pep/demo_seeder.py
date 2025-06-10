@@ -1,10 +1,9 @@
-# pep/demo_seeder.py
-
 import random
 from datetime import date, timedelta
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.models import User
+
 from pep.models import Appointment, Doctor, Note, Patient
 
 def clear_demo_data(doctor):
@@ -25,30 +24,11 @@ def clear_demo_data(doctor):
     # Apaga todos os pacientes marcados como demo
     Patient.objects.filter(is_demo=True).delete()
 
-def run_demo_seed():
-    username = f"demo_{get_random_string(8)}"
-    password = get_random_string(12)
-    email = f"{username}@teste.com"
 
-    # Cria o usuário
-    user = User.objects.create_user(
-        username=username,
-        email=email,
-        password=password,
-        first_name="Demo",
-        last_name="User"
-    )
-
-    # Cria o médico marcado como demo
-    doctor = Doctor.objects.create(
-        user=user,
-        crm="0000-DEMO",
-        specialty="Clínico Geral",
-        is_demo=True,
-        created_at=timezone.now()  # Serve como referência de validade
-    )
-
-    # Cria 100 pacientes fictícios ligados a esse médico demo
+def run_demo_seed(doctor):
+    """
+    Recebe um médico já criado e gera os 100 pacientes demo.
+    """
     for i in range(100):
         name = f"Paciente {i+1}"
         cpf = f"{random.randint(10000000000, 99999999999)}"
@@ -60,5 +40,3 @@ def run_demo_seed():
             birth_date=birth_date,
             is_demo=True
         )
-
-    return doctor  # útil para login automático

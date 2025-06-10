@@ -1,0 +1,21 @@
+{% extends 'pep/base.html' %}
+{% block title %}Prescrições - {{ patient.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Prescrições de {{ patient.name }}</h2>
+
+  {% if prescriptions %}
+    <ul class="list-group">
+      {% for p in prescriptions %}
+        <li class="list-group-item">
+          <strong>{{ p.created_at|date:"d/m/Y H:i" }}</strong><br>
+          {{ p.content|linebreaksbr }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nenhuma prescrição encontrada.</p>
+  {% endif %}
+</div>
+{% endblock %}

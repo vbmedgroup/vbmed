@@ -1,12 +1,12 @@
 from django.shortcuts import redirect
 from django.utils.timezone import now
 from datetime import timedelta
-from django.contrib.auth import login
 from django.contrib.auth import logout
-from pep.models import Doctor
-from pep.utils.demo import clear_demo_data
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
+
+from pep.models import Doctor
+from pep.utils.demo import clear_demo_data
 
 # --- Middleware 1: Redireciona usuários não autenticados ---
 PROTECTED_PATHS = ['/pep/']
@@ -28,7 +28,7 @@ class TesteFinalizadoRedirectMiddleware:
 
         return self.get_response(request)
 
-# --- Middleware 2: Limpa e recria dados demo após 30 min do login ---
+# --- Middleware 2: Limpa e redireciona após 30 minutos ---
 class DemoAutoResetMiddleware(MiddlewareMixin):
     def process_request(self, request):
         path = request.path
@@ -41,10 +41,11 @@ class DemoAutoResetMiddleware(MiddlewareMixin):
             return None
 
         doctor = getattr(user, 'doctor', None)
+
         if doctor and doctor.is_demo:
             if doctor.created_at and (now() - doctor.created_at) > timedelta(minutes=30):
                 clear_demo_data(doctor)
                 logout(request)
-                return redirect(reverse('teste_finalizado'))  # Usar nome da URL
+                return redirect(reverse('teste_finalizado'))
 
         return None
