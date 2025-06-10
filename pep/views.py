@@ -425,7 +425,7 @@ def create_prescription(request, patient_id):
             prescription.doctor = doctor
             prescription.save()
             messages.success(request, "✅ Prescrição registrada com sucesso.")
-            return redirect('pep:patient_detail', patient_id=patient.id)
+            return redirect('pep:patient_profile', pk=patient.id)
         else:
             messages.error(request, "❌ Corrija os erros no formulário.")
     else:
