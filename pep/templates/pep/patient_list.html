@@ -17,7 +17,7 @@
 {% if patients %}
   <div class="patient-list">
     {% for patient in patients %}
-      <a href="{% url 'pep:note_list' patient.id %}" class="patient-card">
+      <a href="{% url 'pep:patient_profile' patient.id %}" class="patient-card">
         <strong class="patient-name">{{ patient.name }}</strong><br>
       </a>
     {% endfor %}
