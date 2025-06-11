@@ -12,7 +12,7 @@
 
 <div class="actions">
   <a href="{% url 'pep:note_create' patient.id %}" class="new-note">+ Nova Evolução</a>
-  <a href="#" class="prescription">+ Prescrição</a>
+  <a href="{% url 'pep:create_prescription' patient.id %}" class="">+ Prescrição</a>
   <a href="{% url 'pep:schedule_appointment' patient.id %}" class="btn-agendar">📅 Agendar Consulta ou Exame</a>
   <a href="{% url 'pep:patient_list' %}" class="back">← Voltar</a>
 </div>
