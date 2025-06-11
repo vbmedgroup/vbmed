@@ -1,0 +1,23 @@
+{% extends 'pep/base.html' %}
+
+{% block title %}
+  {% if prescription %}Editar Prescrição{% else %}Nova Prescrição{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="prescription-form-container">
+  <h2 class="form-title">
+    {% if prescription %}Editar Prescrição{% else %}Nova Prescrição{% endif %}
+  </h2>
+
+  <form method="post" class="prescription-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <div class="form-actions">
+      <button type="submit" class="btn-save">Salvar</button>
+      <a href="{% url 'pep:prescription_list' patient.id %}" class="btn-cancel">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+/* 🎯 SCROLL HORIZONTAL - Fluxo de Atendimento */
 .scroll-wrapper {
   padding: 5px;
   overflow-x: auto;
@@ -8,6 +9,7 @@
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
+
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
 }
@@ -19,6 +21,7 @@
   flex-wrap: nowrap;
 }
 
+/* 📦 CARD DO PACIENTE */
 .card {
   min-width: 130px;
   max-width: 130px;
@@ -41,6 +44,18 @@
   transform: scale(1.03);
 }
 
+/* ✅ BORDAS DINÂMICAS */
+.card.border-orange {
+  border: 3px solid #ff9800;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.4);
+}
+
+.card.border-green {
+  border: 3px solid #2ecc71;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+}
+
+/* ✏️ INFORMAÇÕES DENTRO DO CARD */
 .card-name {
   font-weight: 600;
   font-size: 14px;
@@ -61,53 +76,7 @@
   margin-top: 4px;
 }
 
-/* ✅ BORDAS DINÂMICAS */
-
-.card.border-orange {
-  border: 3px solid #ff9800;
-  box-shadow: 0 0 10px rgba(255, 152, 0, 0.4);
-}
-
-.card.border-green {
-  border: 3px solid #2ecc71;
-  box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
-}
-
-/* 🎯 ESTILO GERAL DA PÁGINA */
-
-.section-title {
-  margin-bottom: 16px;
-  font-size: 20px;
-  color: #184E77;
-}
-
-.title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.title-bar h2 {
-  margin: 0;
-  font-size: 24px;
-  color: #184E77;
-}
-
-.btn-voltar {
-  text-decoration: none;
-  background-color: #f0f0f0;
-  padding: 6px 12px;
-  border-radius: 4px;
-  color: #333;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.btn-voltar:hover {
-  background-color: #ddd;
-}
-
+/* 📄 NOTÍCIAS */
 .news-list {
   display: flex;
   flex-direction: column;
@@ -130,4 +99,39 @@
   margin-top: 8px;
   color: #333;
   font-size: 14px;
+}
+
+/* 🔠 TÍTULOS E BARRA SUPERIOR */
+.section-title {
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #184E77;
+}
+
+.title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.title-bar h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #184E77;
+}
+
+/* 🔙 BOTÃO VOLTAR (caso exista no futuro) */
+.btn-voltar {
+  text-decoration: none;
+  background-color: #f0f0f0;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: #333;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-voltar:hover {
+  background-color: #ddd;
 }

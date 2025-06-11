@@ -1,21 +1,29 @@
 {% extends 'pep/base.html' %}
+{% load static %}
+
 {% block title %}Prescrições - {{ patient.name }}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'pep/css/prescription_list.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Prescrições de {{ patient.name }}</h2>
+<div class="prescription-page">
+  <h2 class="page-title">Prescrições de {{ patient.name }}</h2>
 
   {% if prescriptions %}
-    <ul class="list-group">
+    <div class="card-list">
       {% for p in prescriptions %}
-        <li class="list-group-item">
-          <strong>{{ p.created_at|date:"d/m/Y H:i" }}</strong><br>
-          {{ p.content|linebreaksbr }}
-        </li>
+        <a href="{% url 'pep:prescription_detail' p.id %}" class="card-link">
+          <div class="prescription-card">
+            <div class="prescription-date">{{ p.created_at|date:"d/m/Y H:i" }}</div>
+            <div class="prescription-preview">{{ p.content|truncatewords:15 }}</div>
+          </div>
+        </a>
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
-    <p>Nenhuma prescrição encontrada.</p>
+    <p class="no-prescriptions">Nenhuma prescrição encontrada.</p>
   {% endif %}
 </div>
 {% endblock %}

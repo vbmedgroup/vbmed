@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from datetime import datetime
 from django.utils import timezone
+from operator import attrgetter
 import random
 from django.contrib import messages
 from datetime import time, timedelta, datetime, date
@@ -96,17 +97,32 @@ def user_logout(request):
 # Home 
 @login_required
 def home(request):
-    recent_unviewed = Patient.objects.filter(viewed=False).order_by('last_updated')
-    recent_viewed = Patient.objects.filter(viewed=True).order_by('last_updated')
-    recent_patients = list(recent_unviewed) + list(recent_viewed)
+    all_patients = Patient.objects.all()
 
-    # Lógica refinada para identificar status dos cards
-    for p in recent_patients:
+    updated_unviewed = []
+    new_unviewed = []
+    visualized = []
+
+    for p in all_patients:
         time_diff = abs((p.last_updated - p.arrival_datetime).total_seconds())
 
-        p.is_new = time_diff < 5  # considerado novo se criado recentemente
-        p.was_updated = time_diff >= 5  # atualizado se houve modificação relevante
-        p.is_visualized = p.last_viewed_at and p.last_viewed_at >= p.last_updated
+        p.is_new = time_diff < 5
+        p.was_updated = time_diff >= 5
+        p.is_visualized = bool(p.last_viewed_at and p.last_viewed_at >= p.last_updated)
+
+        if not p.is_visualized and p.was_updated:
+            updated_unviewed.append(p)
+        elif not p.is_visualized and p.is_new:
+            new_unviewed.append(p)
+        else:
+            visualized.append(p)
+
+    # Ordenar dentro de cada grupo por last_updated desc
+    updated_unviewed.sort(key=attrgetter('last_updated'), reverse=True)
+    new_unviewed.sort(key=attrgetter('last_updated'), reverse=True)
+    visualized.sort(key=attrgetter('last_updated'), reverse=True)
+
+    recent_patients = updated_unviewed + new_unviewed + visualized
 
     news_list = News.objects.order_by('-published_at')
 
@@ -114,6 +130,7 @@ def home(request):
         'recent_patients': recent_patients,
         'news_list': news_list,
     })
+
 
 
 def patient_profile(request, pk):
@@ -176,25 +193,16 @@ def edit_patient(request, patient_id):
 def note_list(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
 
-    # Marca o paciente como visualizado (remove borda da home)
-    if not patient.viewed:
-        patient.viewed = True
-        patient.save()
+    # Atualiza como visualizado
+    patient.last_viewed_at = timezone.now()
+    patient.viewed = True
+    patient.save()
 
     notes = Note.objects.filter(patient=patient).order_by('-date')
 
-    # Agrupamento por data
-    grouped_notes = defaultdict(list)
-    for note in notes:
-        note_date = localtime(note.date).date()
-        grouped_notes[note_date].append(note)
-
-    sorted_dates = sorted(grouped_notes.keys(), reverse=True)
-
     return render(request, 'pep/note_list.html', {
         'patient': patient,
-        'grouped_notes': grouped_notes,
-        'sorted_dates': sorted_dates,
+        'notes': notes,
     })
 
 # Nova evolução
@@ -451,4 +459,57 @@ def dashboard(request):
     news = News.objects.order_by('-published_at')[:5]
     return render(request, 'pep/home.html', {'news': news})
 
+
+@login_required
+def prescription_detail(request, prescription_id):
+    prescription = get_object_or_404(Prescription, id=prescription_id)
+    patient = prescription.patient
+    return render(request, 'pep/prescription_detail.html', {
+        'prescription': prescription,
+        'patient': patient,
+    })
+
+@login_required
+def prescription_edit(request, prescription_id):
+    prescription = get_object_or_404(Prescription, id=prescription_id)
+
+    if request.method == 'POST':
+        form = PrescriptionForm(request.POST, instance=prescription)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Prescrição atualizada com sucesso.")
+            return redirect('pep:prescription_detail', prescription_id=prescription.id)
+        else:
+            messages.error(request, "⚠️ Erro ao atualizar prescrição. Verifique os campos.")
+    else:
+        form = PrescriptionForm(instance=prescription)
+
+    return render(request, 'pep/prescription_form.html', {
+        'form': form,
+        'patient': prescription.patient,
+        'editing': True
+    })
+
+@login_required
+def prescription_delete(request, prescription_id):
+    prescription = get_object_or_404(Prescription, id=prescription_id)
+
+    if request.method == 'POST':
+        patient_id = prescription.patient.id
+        prescription.delete()
+        messages.success(request, "🗑️ Prescrição excluída com sucesso.")
+        return redirect('prescription_list', patient_id=patient_id)
+
+    return render(request, 'pep/prescription_confirm_delete.html', {
+        'prescription': prescription,
+        'patient': prescription.patient,
+    })
+
+
+@login_required
+def appointment_detail(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    return render(request, 'pep/appointment_detail.html', {
+        'appointment': appointment
+    })
 

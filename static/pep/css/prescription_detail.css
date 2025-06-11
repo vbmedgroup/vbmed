@@ -1,0 +1,108 @@
+.prescription-a4 {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2cm;
+  font-family: 'Arial', sans-serif;
+  background-color: white;
+  color: black;
+  box-sizing: border-box;
+}
+
+/* Reduz o padding lateral em telas pequenas */
+@media (max-width: 768px) {
+  .prescription-a4 {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .prescription-a4 {
+    padding: 1rem;
+  }
+}
+
+.prescription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.header-left h1 {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.header-left p {
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.btn-print,
+.btn-action {
+  background: none;
+  border: 1px solid black;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  border-radius: 4px;
+}
+
+.btn-print:hover,
+.btn-action:hover {
+  background-color: #eee;
+}
+
+.prescription-meta {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.prescription-body h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid black;
+  padding-bottom: 4px;
+}
+
+.prescription-text {
+  white-space: pre-line;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  border: 1px dashed black;
+  padding: 12px;
+  min-height: 160px;
+  margin-bottom: 40px;
+}
+
+.signature {
+  text-align: right;
+  font-size: 13px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .prescription-a4 {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  body {
+    margin: 0;
+    background: white;
+  }
+}

@@ -1,0 +1,54 @@
+.prescription-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #184E77;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.prescription-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-left: 6px solid #184E77;
+  border-radius: 8px;
+  padding: 16px 20px;
+  transition: box-shadow 0.2s ease;
+}
+
+.prescription-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.prescription-date {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.prescription-preview {
+  font-size: 16px;
+  color: #333;
+}
+
+.no-prescriptions {
+  font-size: 16px;
+  color: #888;
+  text-align: center;
+  margin-top: 40px;
+}

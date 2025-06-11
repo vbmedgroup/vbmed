@@ -1,0 +1,58 @@
+{% extends 'pep/base.html' %}
+{% load static %}
+
+{% block title %}Prescrição - {{ patient.name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'pep/css/prescription_detail.css' %}">
+<style>
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="prescription-a4">
+  <header class="prescription-header">
+    <div class="header-left">
+      <h1>GRUPO VILA BELA</h1>
+      <p>Sistema VB ERP - Prescrição Médica</p>
+      <p>CNPJ: 00.000.000/0001-00</p>
+      <p>Rua Vila Bela, 123 - São Paulo/SP</p>
+      <p>Tel: (11) 0000-0000</p>
+    </div>
+    <div class="header-right no-print">
+      <button onclick="window.print()" class="btn-print">🖨️ Imprimir</button>
+      <a href="{% url 'pep:edit_prescription' prescription.id %}" class="btn-action">✏️ Editar</a>
+      <form method="post" action="{% url 'pep:delete_prescription' prescription.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn-action">🗑️ Excluir</button>
+      </form>
+    </div>
+  </header>
+
+  <hr>
+
+  <section class="prescription-meta">
+    <p><strong>Prescrição nº:</strong> {{ prescription.id }}</p>
+    <p><strong>Data:</strong> {{ prescription.created_at|date:"d/m/Y H:i" }}</p>
+    <p><strong>Paciente:</strong> {{ patient.name }}</p>
+    <p><strong>CPF:</strong> {{ patient.cpf }}</p>
+    <p><strong>Data de nascimento:</strong> {{ patient.birth_date|date:"d/m/Y" }}</p>
+    <p><strong>Profissional:</strong> Dr(a). {{ prescription.doctor.user.get_full_name }} - CRM {{ prescription.doctor.crm }}</p>
+  </section>
+
+  <section class="prescription-body">
+    <h2>Prescrição Médica</h2>
+    <pre class="prescription-text">{{ prescription.content }}</pre>
+  </section>
+
+  <div class="signature">
+    <p>_______________________________________</p>
+    <p>Dr(a). {{ prescription.doctor.user.get_full_name }}</p>
+    <p>CRM {{ prescription.doctor.crm }}</p>
+  </div>
+</div>
+{% endblock %}

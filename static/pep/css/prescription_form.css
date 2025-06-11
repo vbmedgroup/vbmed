@@ -1,0 +1,56 @@
+.prescription-form-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 40px;
+  border: 1px solid #000;
+  background-color: #fff;
+  font-family: 'Arial', sans-serif;
+}
+
+.form-title {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #000;
+}
+
+.prescription-form p {
+  margin-bottom: 20px;
+}
+
+.prescription-form label {
+  font-weight: bold;
+  color: #000;
+}
+
+.prescription-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #000;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 10px 20px;
+  border: 1px solid #000;
+  background: none;
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-save:hover,
+.btn-cancel:hover {
+  background-color: #000;
+  color: #fff;
+}

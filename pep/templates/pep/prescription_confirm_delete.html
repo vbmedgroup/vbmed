@@ -1,0 +1,18 @@
+{% extends 'pep/base.html' %}
+
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Confirmação de Exclusão</h2>
+  <p>Você tem certeza que deseja excluir esta prescrição de <strong>{{ patient.name }}</strong>?</p>
+
+  <div style="margin-top: 20px;">
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">🗑️ Confirmar Exclusão</button>
+      <a href="{% url 'pep:prescription_detail' prescription.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
