@@ -11,6 +11,17 @@
 <div class="prescription-page">
   <h2 class="page-title">Prescrições de {{ patient.name }}</h2>
 
+  <!-- Botão de nova prescrição -->
+  <div class="actions-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+      <label for="date">Filtrar por data:</label>
+      <input type="date" id="date" name="date" value="{{ request.GET.date }}">
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <a href="{% url 'pep:create_prescription' patient.id %}" class="new-prescription-btn" style="padding: 8px 12px; background-color: #4CAF50; color: white; border-radius: 4px; text-decoration: none;">Nova Prescrição</a>
+  </div>
+
   {% if prescriptions %}
     <div class="card-list">
       {% for p in prescriptions %}

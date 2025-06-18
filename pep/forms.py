@@ -1,13 +1,8 @@
 from django import forms
 from .models import Appointment, Doctor, Patient, Prescription
-from django.contrib.auth.models import User
 from django.utils.timezone import now
-from datetime import datetime
 
 #Formulário para gerar novo paciente
-from django import forms
-from pep.models import Patient
-
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
@@ -75,7 +70,6 @@ class AppointmentForm(forms.ModelForm):
         if selected_date < now().date():
             raise forms.ValidationError("Não é possível agendar para uma data no passado.")
         return selected_date
-    
 
 
 class PrescriptionForm(forms.ModelForm):

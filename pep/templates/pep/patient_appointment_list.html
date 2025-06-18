@@ -1,22 +1,69 @@
 {% extends 'pep/base.html' %}
+{% load static %}
+{% load tz %}
+
 {% block title %}Agendamentos - {{ patient.name }}{% endblock %}
 
-{% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Agendamentos de {{ patient.name }}</h2>
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'pep/css/patient_appointments_list.css' %}">
+{% endblock %}
 
-  {% if appointments %}
-    <ul class="list-group">
-      {% for a in appointments %}
-        <li class="list-group-item">
-          <strong>{{ a.date|date:"d/m/Y" }} {{ a.time }}</strong><br>
-          Tipo: {{ a.get_type_display }}<br>
-          Profissional: {{ a.professional }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Nenhum agendamento encontrado.</p>
-  {% endif %}
+{% block content %}
+{% with today=now|date:"Y-m-d" %}
+<div class="agendamento-view">
+  <div class="schedule-container">
+    <!-- Cabeçalho -->
+    <div class="header">
+      <h2>Agendamentos</h2>
+      <div class="sub-header">
+        Paciente: <strong>{{ patient.name }}</strong>
+      </div>
+    </div>
+
+    <!-- Botão Novo Agendamento -->
+    <div style="margin-bottom: 30px;">
+      <a href="{% url 'pep:schedule_appointment' patient.id %}" class="btn-novo">Novo Agendamento</a>
+    </div>
+
+    <!-- Filtros -->
+    <form method="get">
+      <div>
+        <label for="date">Filtrar por data:</label>
+        <input type="date" name="date" id="date" value="{{ selected_date }}">
+      </div>
+
+      <div>
+        <label for="professional">Filtrar por profissional:</label>
+        <select name="professional" id="professional">
+          <option value="">Todos</option>
+          {% for prof in professionals %}
+            <option value="{{ prof.id }}" {% if prof.id|stringformat:"s" == selected_professional %}selected{% endif %}>
+              {{ prof.user.get_full_name|default:prof.user.username }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- Lista de Agendamentos -->
+    <div class="appointment-list">
+      {% if appointments %}
+        <ul>
+          {% for a in appointments %}
+            <li>
+              <strong>{{ a.date|date:"d/m/Y" }} {{ a.time }}</strong><br>
+              Tipo: {{ a.get_type_display }}<br>
+              Profissional: {{ a.professional.user.get_full_name|default:a.professional.user.username }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Nenhum agendamento encontrado.</p>
+      {% endif %}
+    </div>
+  </div>
 </div>
+{% endwith %}
 {% endblock %}

@@ -5,115 +5,7 @@
 {% block title %}Agendamento - {{ patient.name }}{% endblock %}
 
 {% block extra_head %}
-  <style>
-    .agendamento-view .schedule-container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 50px 60px;
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .agendamento-view .header {
-      margin-bottom: 30px;
-    }
-
-    .agendamento-view .header h2 {
-      font-size: 28px;
-      color: #184E77;
-      margin-bottom: 10px;
-    }
-
-    .agendamento-view .sub-header {
-      font-size: 18px;
-      color: #444;
-    }
-
-    .agendamento-view .btn-back {
-      background-color: #184E77;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      display: inline-block;
-      margin-top: 10px;
-    }
-
-    .agendamento-view .btn-back:hover {
-      background-color: #123a5c;
-    }
-
-    .agendamento-view .message-list {
-      list-style: none;
-      padding-left: 0;
-      margin-bottom: 30px;
-    }
-
-    .agendamento-view .message-list li {
-      font-weight: bold;
-    }
-
-    .agendamento-view form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .agendamento-view label {
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .agendamento-view input,
-    .agendamento-view select,
-    .agendamento-view textarea {
-      padding: 10px 14px;
-      font-size: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
-    }
-
-    .agendamento-view button {
-      padding: 12px 28px;
-      background-color: #184E77;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      align-self: flex-start;
-      cursor: pointer;
-    }
-
-    .agendamento-view button:hover {
-      background-color: #123a5c;
-    }
-
-    ul, .message-list{
-      margin-top: 15px;
-    }
-
-    @media (max-width: 768px) {
-      .agendamento-view .schedule-container {
-        padding: 30px 20px;
-        margin: 0 15px;
-      }
-
-      .agendamento-view button {
-        width: 100%;
-        text-align: center;
-      }
-
-      .agendamento-view .btn-back {
-        max-width: 150px;
-        font-size: 14px;
-        padding: 8px 14px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'pep/css/schedule_appointment.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -146,6 +38,7 @@
       {% endif %}
     </div>
 
+    <!-- Formulário GET para buscar horários -->
     <!-- Formulário GET para buscar horários -->
     <form method="get">
       <div>

@@ -143,3 +143,5 @@ SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
+#Validação de agendamento após 1h do horário atual
+MIN_HOURS_AHEAD_FOR_APPOINTMENT = 1

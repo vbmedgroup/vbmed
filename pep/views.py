@@ -1,25 +1,24 @@
+from django.core.cache import cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.timezone import localtime, now, make_aware
-from collections import defaultdict
+from django.utils.timezone import localtime, now, make_aware, is_naive
 from pep.forms import AppointmentForm, PatientForm, PrescriptionForm
 from pep.utils.general import post_login_redirect
+from django.conf import settings
 from .models import Appointment, Doctor, News, Patient, Note, Prescription
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
-from datetime import datetime
+from django.contrib.auth import login, logout
 from django.utils import timezone
 from operator import attrgetter
 import random
 from django.contrib import messages
 from datetime import time, timedelta, datetime, date
 from django.contrib.auth.models import User
-from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
+from django.utils.dateparse import parse_date 
 
 
+# ========================== AUTENTICAÇÃO ==========================
 def user_login(request):
     if request.user.is_authenticated:
         return redirect('pep:home')  # ou post_login_redirect(request)
@@ -34,7 +33,6 @@ def user_login(request):
         form = AuthenticationForm()
 
     return render(request, 'pep/login.html', {'form': form})
-
 
 def test_drive_view(request):
     agora = timezone.now()
@@ -89,15 +87,17 @@ def test_drive_view(request):
     login(request, user)
     return post_login_redirect(request)
 
-
 def user_logout(request):
     logout(request)
     return redirect("/teste_finalizado/")
 
-# Home 
+
+# ========================== HOME E DASHBOARD ==========================
 @login_required
 def home(request):
-    all_patients = Patient.objects.all()
+    all_patients = Patient.objects.only(
+        'id', 'name', 'arrival_datetime', 'last_updated', 'last_viewed_at'
+    )
 
     updated_unviewed = []
     new_unviewed = []
@@ -117,29 +117,39 @@ def home(request):
         else:
             visualized.append(p)
 
-    # Ordenar dentro de cada grupo por last_updated desc
     updated_unviewed.sort(key=attrgetter('last_updated'), reverse=True)
     new_unviewed.sort(key=attrgetter('last_updated'), reverse=True)
     visualized.sort(key=attrgetter('last_updated'), reverse=True)
 
     recent_patients = updated_unviewed + new_unviewed + visualized
 
-    news_list = News.objects.order_by('-published_at')
+    # Cache da lista de notícias
+    news_list = cache.get('news_list')
+    if not news_list:
+        news_list = News.objects.order_by('-published_at')[:5]
+        cache.set('news_list', news_list, 300)  # 5 minutos
 
     return render(request, 'pep/home.html', {
         'recent_patients': recent_patients,
         'news_list': news_list,
     })
+@login_required
+def dashboard(request):
+    news = News.objects.order_by('-published_at')[:5]
+    return render(request, 'pep/home.html', {'news': news})
 
 
-
+# ========================== PACIENTES ==========================
+@login_required
 def patient_profile(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
 
     # Coletando os dados reais do paciente
-    evolutions = Note.objects.filter(patient=patient)
-    prescriptions = Prescription.objects.filter(patient=patient)
-    appointments = Appointment.objects.filter(patient=patient)
+    evolutions = Note.objects.filter(patient=patient).only('date', 'content')
+    prescriptions = Prescription.objects.filter(patient=patient).only('created_at', 'content')
+    appointments = Appointment.objects.select_related('professional__user').only(
+        'date', 'time', 'type', 'professional__user__first_name'
+    ).filter(patient=patient)
 
     context = {
         'patient': patient,
@@ -149,13 +159,11 @@ def patient_profile(request, pk):
     }
     return render(request, 'pep/patient_profile.html', context)
 
-
 @login_required
 def patient_list(request):
-    patients = Patient.objects.all().order_by('name')
+    patients = Patient.objects.only('id', 'name', 'cpf').order_by('name')
     return render(request, 'pep/patient_list.html', {'patients': patients})
 
-# Adicionar novo paciente
 @login_required
 def patient_create(request):
     if request.method == 'POST':
@@ -188,7 +196,8 @@ def edit_patient(request, patient_id):
 
     return render(request, 'pep/patient_form.html', {'form': form})
 
-# Evoluções do paciente
+
+# ========================== ANOTAÇÕES (EVOLUÇÕES) ==========================
 @login_required
 def note_list(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
@@ -198,14 +207,13 @@ def note_list(request, patient_id):
     patient.viewed = True
     patient.save()
 
-    notes = Note.objects.filter(patient=patient).order_by('-date')
+    notes = Note.objects.filter(patient=patient).only('date', 'content').order_by('-date')
 
     return render(request, 'pep/note_list.html', {
         'patient': patient,
         'notes': notes,
     })
 
-# Nova evolução
 @login_required
 def note_create(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
@@ -263,29 +271,33 @@ def fill_section(request, patient_id, section):
     })
 
 
-
-
+# ========================== AGENDAMENTOS ==========================
 def get_available_times(date, professional):
     start = time(8, 0)
     end = time(17, 0)
     interval = timedelta(minutes=30)
     times = []
 
+    now_local = localtime(now())
+    is_today = date == now_local.date()
+    cutoff_datetime = now_local + timedelta(hours=getattr(settings, 'MIN_HOURS_AHEAD_FOR_APPOINTMENT', 1))
+
     current = datetime.combine(date, start)
     end_dt = datetime.combine(date, end)
 
-    now_local = localtime(now())
-    is_today = date == now_local.date()
+    # Torna 'current' e 'cutoff' ambos aware para evitar comparação inválida
+    if is_naive(current):
+        current = make_aware(current)
+    if is_naive(end_dt):
+        end_dt = make_aware(end_dt)
 
     while current <= end_dt:
         current_time = current.time()
 
-        # Oculta horários passados se a data for hoje
-        if is_today and datetime.combine(date, current_time) < now_local:
+        if is_today and current < cutoff_datetime:
             current += interval
             continue
 
-        # Verifica se o horário está livre
         if not Appointment.objects.filter(professional=professional, date=date, time=current_time).exists():
             times.append(current_time)
 
@@ -324,7 +336,6 @@ def schedule_appointment(request, patient_id):
             if is_doctor:
                 appointment.professional = doctor_instance
 
-            # Verifica se está agendando para o passado
             appointment_datetime_str = f"{appointment.date} {appointment.time}"
             try:
                 appointment_datetime_naive = datetime.strptime(appointment_datetime_str, "%Y-%m-%d %H:%M")
@@ -363,13 +374,18 @@ def schedule_appointment(request, patient_id):
         if selected_date and selected_doctor_id:
             try:
                 date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
-                professional = get_object_or_404(Doctor, pk=selected_doctor_id)
+                professional = Doctor.objects.get(pk=selected_doctor_id)
+
+                # Validação extra para garantir que `professional` é realmente um Doctor
+                if not isinstance(professional, Doctor):
+                    raise TypeError("Profissional inválido.")
+
                 available_times = get_available_times(date_obj, professional)
 
                 if not available_times:
                     messages.error(request, "❌ Não há mais horários disponíveis nesta data.")
-            except Exception:
-                messages.error(request, "⚠️ Erro ao buscar horários. Verifique a data ou profissional selecionado.")
+            except (Doctor.DoesNotExist, TypeError, ValueError) as e:
+                messages.error(request, f"⚠️ Erro ao buscar horários. Verifique a data ou profissional selecionado. ({e})")
 
     context = {
         'patient': patient,
@@ -377,9 +393,10 @@ def schedule_appointment(request, patient_id):
         'available_times': available_times,
         'is_doctor': is_doctor,
         'doctor': doctor_instance,
+        'selected_date': selected_date,
+        'selected_doctor_id': selected_doctor_id,
     }
     return render(request, 'pep/schedule_appointment.html', context)
-
 
 @login_required
 def appointment_list(request):
@@ -393,7 +410,11 @@ def appointment_list(request):
 
     selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
     appointments = Appointment.objects.select_related('patient', 'professional__user') \
-                                      .filter(date=selected_date)
+    .only(
+        'date', 'time', 'type',
+        'patient__name',
+        'professional__user__first_name', 'professional__user__last_name'
+    ).filter(date=selected_date)
 
     if professional_id:
         appointments = appointments.filter(professional__id=professional_id)
@@ -410,16 +431,48 @@ def appointment_list(request):
         'selected_professional_id': professional_id
     })
 
+@login_required
+def appointment_detail(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    return render(request, 'pep/appointment_detail.html', {
+        'appointment': appointment
+    })
+
+@login_required
 def patient_appointment_list(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
-    appointments = Appointment.objects.filter(patient=patient).order_by('-date', '-time')
+
+    # Filtros recebidos
+    date = request.GET.get('date')
+    professional_id = request.GET.get('professional')
+
+    # Query inicial com joins e carregamento restrito de campos
+    appointments = Appointment.objects.select_related('professional__user') \
+        .only('date', 'time', 'type', 'professional__user__first_name') \
+        .filter(patient=patient)
+
+    if date:
+        appointments = appointments.filter(date=date)
+    if professional_id:
+        appointments = appointments.filter(professional_id=professional_id)
+
+    appointments = appointments.order_by('-date', '-time')
+
+    # Lista de médicos para filtro (com join otimizado)
+    professionals = Doctor.objects.select_related('user') \
+        .only('id', 'user__first_name', 'user__last_name', 'user__username') \
+        .order_by('user__first_name')
 
     return render(request, 'pep/patient_appointment_list.html', {
         'patient': patient,
         'appointments': appointments,
+        'professionals': professionals,
+        'selected_date': date,
+        'selected_professional': professional_id,
     })
 
 
+# ========================== PRESCRIÇÕES ==========================
 @login_required
 def create_prescription(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
@@ -444,21 +497,25 @@ def create_prescription(request, patient_id):
         'patient': patient,
     })
 
+@login_required
 def prescription_list(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
-    prescriptions = Prescription.objects.filter(patient=patient).order_by('-created_at')
+    prescriptions = Prescription.objects.filter(patient=patient).only('created_at', 'content')
+
+    # Filtro por data (GET param: date=YYYY-MM-DD)
+    date_str = request.GET.get('date')
+    if date_str:
+        try:
+            date = parse_date(date_str)
+            if date:
+                prescriptions = prescriptions.filter(created_at__date=date)
+        except ValueError:
+            pass  # Se a data for inválida, ignora o filtro
 
     return render(request, 'pep/prescription_list.html', {
         'patient': patient,
         'prescriptions': prescriptions
     })
-
-
-@login_required
-def dashboard(request):
-    news = News.objects.order_by('-published_at')[:5]
-    return render(request, 'pep/home.html', {'news': news})
-
 
 @login_required
 def prescription_detail(request, prescription_id):
@@ -506,10 +563,5 @@ def prescription_delete(request, prescription_id):
     })
 
 
-@login_required
-def appointment_detail(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
-    return render(request, 'pep/appointment_detail.html', {
-        'appointment': appointment
-    })
+
 
